@@ -8,5 +8,5 @@ type Config struct {
 	QQ       QQ       `yaml:"qq"`
 	JWT      JWT      `yaml:"jwt"`
 	QiNiu    QiNiu    `yaml:"qi_niu"`
-	Email    Email    `yaml:"email""`
+	Email    Email    `yaml:"email"`
 }

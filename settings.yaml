@@ -18,40 +18,40 @@ system:
   env: release
 site_info:
   created_at: "2023-02-12"
-  bei_an: "沪ICP20211010123号-2"
-  title: "Jack的个人博客"
-  qq_image: "http://liritian.com/static/my/img/footer/qq.png"
+  bei_an: 沪ICP20211010123号-2
+  title: Jack的个人博客
+  qq_image: http://liritian.com/static/my/img/footer/qq.png
   version: 6.0.2
   email: 2663456523@qq.com
-  wechat_image: "http://www.liritian.com/static/my/img/footer/wechat.png"
+  wechat_image: http://www.liritian.com/static/my/img/footer/wechat.png
   name: jack
   job: 后端开发
   slogan: 赚大钱 开宝马
   slogan_en: earn money buy bmw
   web: http://liritian.com
-  bilibili_url: 111
-  github_url: 222
-  gitee_url: 33
+  bilibili_url: "111"
+  github_url: "222"
+  gitee_url: "33"
+qq:
+  app_id: "2323"
+  key: xx
+  redirect: http://xx.xxx.com/login?flag=qq
 jwt:
   secret: xxxx
   expires: 48
   issuer: xx
-qq:
-  app-id: "xx"
-  key: xx
-  redirect: http://xx.xxx.com/login?flag=qq
-email:
-  host: smtp.qq.com
-  port: 465
-  user: xxx@qq.com
-  password: xxx
-  default-from-email: jack
-  use-ssl: xx
-  use-tls: xx
 qi_niu:
   access_key: UMM-xxFdRif-xx
   secret_key: xx
   bucket: gin_blog
   cdn: xx://xx.xxx.com/
   zone: xx
-  size: 5
+  size: "5"
+email:
+  host: 127.0.0.1
+  port: 0
+  user: ""
+  password: ""
+  default_from_email: ""
+  use_ssl: false
+  use_tls: false

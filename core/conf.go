@@ -28,7 +28,7 @@ func InitCoreConf() {
 		log.Fatal("config unmarshal error:%s")
 	}
 
-	log.Println("config yamlFile load Init success.")
+	//log.Println("config yamlFile load Init success.")
 
 	//fmt.Println(c)
 	//存放到全局变量下
