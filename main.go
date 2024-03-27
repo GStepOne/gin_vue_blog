@@ -13,6 +13,12 @@ func main() {
 	global.Log = core.InitLogger()
 	//初始化数据库
 	global.DB = core.InitGorm()
+
+	////建表
+	//option := flag.Option{
+	//	DB: true,
+	//}
+	//flag.SwitchOption(option)
 	//初始化路由
 	router := routers.InitRouter()
 	addr := global.Config.System.Addr()

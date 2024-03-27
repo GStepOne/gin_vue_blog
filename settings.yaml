@@ -2,7 +2,7 @@ mysql:
   host: 127.0.0.1
   port: 3306
   db: gvb
-  config: ""
+  config: "charset=utf8mb4&parseTime=True&loc=Local"
   user: root
   password: huahua521
   log_level: dev
@@ -41,12 +41,16 @@ jwt:
   expires: 48
   issuer: xx
 qi_niu:
+  enable: true
   access_key: UMM-xxFdRif-xx
   secret_key: xx
   bucket: gin_blog
   cdn: xx://xx.xxx.com/
   zone: xx
   size: "5"
+upload:
+  path: uploads/file
+  size: 1
 email:
   host: 127.0.0.1
   port: 0

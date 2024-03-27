@@ -7,4 +7,5 @@ type QiNiu struct {
 	CDN       string `mapstructure:"cdn" json:"cdn" yaml:"cdn"`    //访问图片的地址的前缀
 	Zone      string `mapstructure:"zone" json:"zone" yaml:"zone"` //存储的地区  华东 华北
 	Size      string `mapstructure:"size" json:"size" yaml:"size"` //
+	Enable    bool   `mapstructure:"enable" json:"enable" yaml:"enable"`
 }

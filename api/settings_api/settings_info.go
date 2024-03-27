@@ -10,8 +10,6 @@ type SettingsUri struct {
 	Name string `uri:"name"`
 }
 
-var SettingsMap map[string]string
-
 func (SettingsApi) SettingsInfoView(c *gin.Context) {
 	var cr SettingsUri
 	err := c.ShouldBindUri(&cr)

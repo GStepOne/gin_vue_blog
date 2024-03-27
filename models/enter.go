@@ -20,3 +20,14 @@ type ResponseList struct {
 	List  any `json:"list"`
 	Count any `json:"count"`
 }
+
+type PageView struct {
+	Page  int    `form:"page,default:1"`
+	Key   string `form:"key"`
+	Limit int    `form:"limit"`
+	Sort  string `form:"sort"`
+}
+
+type RemoveRequest struct {
+	IDList []uint `json:"id_list"`
+}
