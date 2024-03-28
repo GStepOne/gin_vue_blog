@@ -3,8 +3,11 @@ package images_api
 import (
 	"blog/gin/global"
 	"blog/gin/models"
+	"blog/gin/models/ctype"
 	"blog/gin/models/res"
 	"blog/gin/plugins/qiniu"
+	"blog/gin/service"
+	"blog/gin/service/image"
 	"blog/gin/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -14,12 +17,6 @@ import (
 	"path"
 	"strings"
 )
-
-type FileUploadResponse struct {
-	FileName  string `json:"file_name"`
-	IsSuccess bool   `json:"is_success"`
-	Msg       string `json:"msg"`
-}
 
 var (
 	WhiteImageList = []string{
@@ -47,29 +44,31 @@ func (ImagesApi) ImageUploadView(c *gin.Context) {
 	fmt.Println(fileHeader.Header)
 	fmt.Println(fileHeader.Size)
 	fmt.Println(fileHeader.Filename)
-	//fileHeader.Open()
 }
 
-func (ImagesApi) ImagesMultiUploadView(c *gin.Context) {
-	form, err := c.MultipartForm()
+type FileUploadResponse struct {
+	FileName  string          `json:"file_name"`
+	IsSuccess bool            `json:"is_success"`
+	Msg       string          `json:"msg"`
+	ImageType ctype.ImageType `json:"image_type"`
+	FilePath  string          `json:"file_path"`
+}
 
+func (ImagesApi) ImagesMultiUploadViewEver(c *gin.Context) {
+	form, err := c.MultipartForm()
 	if err != nil {
 		res.FailWithMessage(err.Error(), c)
 		return
 	}
-
 	fileList, ok := form.File["images"]
 	if !ok {
 		res.FailWithMessage("不存在的文件", c)
 		return
 	}
 
-	//判断路径是否存在，不存在创建
-	//pathList := strings.Split(global.Config.Upload.Path, "/")
 	basePath := global.Config.Upload.Path
 	_, err = os.ReadDir(basePath)
 	if err != nil {
-		//fmt.Println(dir, err)
 		err = os.MkdirAll(basePath, fs.ModePerm)
 		if err != nil {
 			global.Log.Error(err)
@@ -128,6 +127,31 @@ func (ImagesApi) ImagesMultiUploadView(c *gin.Context) {
 			})
 			continue
 		}
+		imageType := ctype.Local
+		//上传到7牛
+		if global.Config.QiNiu.Enable {
+			//上传到七牛去
+			imageType = ctype.QiNiu
+			filePathIn7Cow, err := qiniu.UploadImageQiniu(byteFile, fileName, global.Config.QiNiu.Prefix)
+			fmt.Println("7niu", filePathIn7Cow)
+			if err != nil {
+				resList = append(resList, FileUploadResponse{
+					FileName:  fileName,
+					FilePath:  filePathIn7Cow,
+					Msg:       "上传失败",
+					ImageType: imageType,
+					IsSuccess: false,
+				})
+			} else {
+				resList = append(resList, FileUploadResponse{
+					FileName:  fileName,
+					FilePath:  filePathIn7Cow,
+					Msg:       "上传成功",
+					ImageType: imageType,
+					IsSuccess: true,
+				})
+			}
+		}
 
 		err = c.SaveUploadedFile(file, filePath)
 		if err != nil {
@@ -136,16 +160,61 @@ func (ImagesApi) ImagesMultiUploadView(c *gin.Context) {
 		}
 		//图片入库
 		global.DB.Create(&models.BannerModel{
-			Path: filePath,
-			Hash: imageHash,
-			Name: fileName,
+			Path:      filePath,
+			Hash:      imageHash,
+			Name:      fileName,
+			ImageType: imageType,
 		})
 
-		if global.Config.QiNiu.Enable {
-			//上传到七牛去
-			qiniu.UploadImageQiniu(filePath, fileName)
-		}
+	}
 
+	res.OKWithData(resList, c)
+
+}
+
+func (ImagesApi) ImagesMultiUploadView(c *gin.Context) {
+	form, err := c.MultipartForm()
+	if err != nil {
+		res.FailWithMessage(err.Error(), c)
+		return
+	}
+	fileList, ok := form.File["images"]
+	if !ok {
+		res.FailWithMessage("不存在的文件", c)
+		return
+	}
+
+	basePath := global.Config.Upload.Path
+	_, err = os.ReadDir(basePath)
+	if err != nil {
+		err = os.MkdirAll(basePath, fs.ModePerm)
+		if err != nil {
+			global.Log.Error(err)
+			return
+		}
+	}
+
+	var resList []image.FileUploadResponse
+	for _, file := range fileList {
+		ServiceRes := service.ServiceApp.ImageService.ImageUploadService(file)
+		fmt.Println("上传返回值", ServiceRes)
+		resList = append(resList, ServiceRes)
+		//if ServiceRes.IsSuccess {
+		//	continue
+		//}
+
+		//不是7牛 本地保存一下
+		if !global.Config.QiNiu.Enable {
+			fmt.Println("文件路径 非7牛", ServiceRes.FilePath)
+			err = c.SaveUploadedFile(file, ServiceRes.FilePath)
+			if err != nil {
+				global.Log.Error(err.Error())
+				ServiceRes.Msg = err.Error()
+				ServiceRes.IsSuccess = false
+				resList = append(resList, ServiceRes)
+				continue
+			}
+		}
 	}
 
 	res.OKWithData(resList, c)

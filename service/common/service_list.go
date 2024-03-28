@@ -17,8 +17,9 @@ func ComList[T any](model T, option Option) (list []T, count int64, err error) {
 	if option.Debug {
 		DB = global.DB.Session(&gorm.Session{Logger: global.MysqlLog})
 	}
-
-	count = DB.Debug().Select("id").Find(&list).RowsAffected
+	//增加model
+	query := DB.Where(model)
+	count = query.Debug().Select("id").Find(&list).RowsAffected
 	offset := (option.Page - 1) * option.Limit
 	if offset < 0 {
 		offset = 0
@@ -27,7 +28,8 @@ func ComList[T any](model T, option Option) (list []T, count int64, err error) {
 	if option.Sort == "" {
 		option.Sort = "created_at desc"
 	}
-	DB.Debug().Limit(option.Limit).Offset(offset).Order(option.Sort).Find(&list)
+
+	err = query.Debug().Limit(option.Limit).Offset(offset).Order(option.Sort).Find(&list).Error
 
 	return list, count, err
 }

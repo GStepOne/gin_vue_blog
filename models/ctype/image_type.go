@@ -7,6 +7,7 @@ const (
 	QiNiu ImageType = 2 //七牛云
 )
 
+//
 //func (s SignStatus) MarshalJSON() ([]byte, error) {
 //	return json.Marshal(s.String())
 //}

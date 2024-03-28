@@ -14,9 +14,11 @@ import (
 )
 
 type FileUploadResponse struct {
-	FileName  string `json:"file_name"`
-	IsSuccess bool   `json:"is_success"`
-	Msg       string `json:"msg"`
+	FileName  string          `json:"file_name"`
+	IsSuccess bool            `json:"is_success"`
+	Msg       string          `json:"msg"`
+	ImageType ctype.ImageType `json:"image_type"`
+	FilePath  string          `json:"file_path"`
 }
 
 var (
@@ -33,10 +35,9 @@ var (
 )
 
 func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUploadResponse) {
-
-	var resList []FileUploadResponse
 	fileName := file.Filename
-	res.FileName = fileName
+	fmt.Println("文件名", fileName)
+	imageType := ctype.Local
 	res.IsSuccess = false
 	//白名单判断
 	nameList := strings.Split(fileName, ".")
@@ -45,8 +46,11 @@ func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUplo
 		res.Msg = "非法文件"
 		return res
 	}
+
 	basePath := global.Config.Upload.Path
 	filePath := path.Join(basePath, file.Filename)
+	res.FilePath = filePath
+
 	size := float64(file.Size) / float64(1024*1024)
 	if size >= float64(global.Config.Upload.Size) {
 		res.Msg = fmt.Sprintf("图片大小超过设定大小，设定大小为: %dMB,当前大小为%.2fMB", global.Config.Upload.Size, size)
@@ -65,29 +69,33 @@ func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUplo
 	err = global.DB.Take(&bannerModel, "hash = ?", imageHash).Error
 	if err == nil {
 		res.Msg = "图片已存在"
-		res.FileName = bannerModel.Path
+		res.FilePath = bannerModel.Path
 		return res
 	}
 
-	var ctype   ctype.Local
 	if global.Config.QiNiu.Enable {
 		//上传到七牛去
-		ctype = ctype.QiNiu
-		qiniu.UploadImageQiniu(filePath, fileName)
-
-	} else {
-		err = c.SaveUploadedFile(file, filePath)
+		imageType = ctype.QiNiu
+		filePathIn7Cow, err := qiniu.UploadImageQiniu(byteFile, fileName, global.Config.QiNiu.Prefix)
+		fmt.Println(err)
 		if err != nil {
-			global.Log.Error(err.Error())
+			global.Log.Error("七牛上传失败:", err)
+			res.Msg = err.Error()
+			res.ImageType = imageType
+		} else {
+			res.IsSuccess = true
+			res.ImageType = imageType
+			res.Msg = "上传成功"
+			res.FilePath = filePathIn7Cow
 		}
 	}
-	//图片入库
+
 	global.DB.Create(&models.BannerModel{
-		Path: filePath,
-		Hash: imageHash,
-		Name: fileName,
-		ImageType:,
+		Path:      filePath,
+		Hash:      imageHash,
+		Name:      fileName,
+		ImageType: ctype.QiNiu,
 	})
 
-	res.OKWithData(resList, c)
+	return res
 }

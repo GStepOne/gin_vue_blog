@@ -10,7 +10,7 @@ logger:
   level: info
   prefix: '[gvb]'
   director: log
-  show_line: false
+  show_line: true
   log_in_console: ""
 system:
   host: 0.0.0.0
@@ -47,7 +47,8 @@ qi_niu:
   bucket: gin-vue-jack-blog
   cdn: sazz982o7.hd-bkt.clouddn.com
   zone: xx
-  size: "5"
+  size: 5
+  prefix: "gin"
 upload:
   path: uploads/file
   size: 1

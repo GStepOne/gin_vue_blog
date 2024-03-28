@@ -1,13 +1,14 @@
 package res
 
 import (
+	"blog/gin/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 const (
 	SUCCESS = 0
-	ERROR   = 7
+	ERROR   = 1
 )
 
 type Response struct {
@@ -45,8 +46,7 @@ func Fail(data any, msg string, c *gin.Context) {
 }
 
 func FailWithMessage(msg string, c *gin.Context) {
-	Result(ERROR, map[string]any{}, "success", c)
-
+	Result(ERROR, map[string]any{}, msg, c)
 }
 
 func FailWithCode(code ErrorCode, c *gin.Context) {
@@ -56,4 +56,10 @@ func FailWithCode(code ErrorCode, c *gin.Context) {
 		return
 	}
 	Result(ERROR, map[string]any{}, "未知错误", c)
+}
+
+func FailWithError(err error, request any, c *gin.Context) {
+	errString := utils.GetValidMsg(err, request)
+	//GetValidMsg
+	Result(ERROR, map[string]any{}, errString, c)
 }

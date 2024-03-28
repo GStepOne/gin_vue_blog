@@ -18,7 +18,6 @@ type BannerModel struct {
 
 // 在同一个事务中更新数据
 func (b *BannerModel) BeforeDelete(tx *gorm.DB) (err error) {
-	//b.
 	if b.ImageType == ctype.Local {
 		err = os.Remove(b.Path)
 		global.Log.Error(err)
