@@ -11,7 +11,7 @@ type ArticleModel struct {
 	CommentCount  string         `json:"comment_count"`
 	DiggCount     string         `json:"digg_count"`
 	CollectsCount string         `json:"collects_count"`
-	TagModels     []TagModel     `gorm:"many2many:article_tag" json:"tag_models"`
+	TagModels     []TagModel     `gorm:"many2many:article_tag_models" json:"tag_models"`
 	CommentModels []CommentModel `gorm:"foreignKey:ArticleID" json:"-"`
 	UserModel     UserModel      `gorm:"foreignKey:UserID" json:"-"`
 	UserID        uint           `json:"user_id"`

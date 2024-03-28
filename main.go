@@ -2,6 +2,7 @@ package main
 
 import (
 	"blog/gin/core"
+	"blog/gin/flag"
 	"blog/gin/global"
 	"blog/gin/routers"
 )
@@ -14,11 +15,11 @@ func main() {
 	//初始化数据库
 	global.DB = core.InitGorm()
 
-	////建表
-	//option := flag.Option{
-	//	DB: true,
-	//}
-	//flag.SwitchOption(option)
+	//建表
+	option := flag.Parse()
+	if flag.IsWebStop(option) {
+		flag.SwitchOption(option)
+	}
 	//初始化路由
 	router := routers.InitRouter()
 	addr := global.Config.System.Addr()

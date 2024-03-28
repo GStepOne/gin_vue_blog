@@ -4,6 +4,7 @@ import (
 	"blog/gin/global"
 	"blog/gin/models"
 	"blog/gin/models/res"
+	"blog/gin/plugins/qiniu"
 	"blog/gin/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -139,6 +140,11 @@ func (ImagesApi) ImagesMultiUploadView(c *gin.Context) {
 			Hash: imageHash,
 			Name: fileName,
 		})
+
+		if global.Config.QiNiu.Enable {
+			//上传到七牛去
+			qiniu.UploadImageQiniu(filePath, fileName)
+		}
 
 	}
 

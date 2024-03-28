@@ -42,10 +42,10 @@ jwt:
   issuer: xx
 qi_niu:
   enable: true
-  access_key: UMM-xxFdRif-xx
-  secret_key: xx
-  bucket: gin_blog
-  cdn: xx://xx.xxx.com/
+  access_key: P-8AgS1WqT-BgVSDf1o3oPzs-892QbbNuHectlVo
+  secret_key: OcrIEwxlmhZ-huVdC83_x3_bj2tP-cwxmITdM_Nd
+  bucket: gin-vue-jack-blog
+  cdn: sazz982o7.hd-bkt.clouddn.com
   zone: xx
   size: "5"
 upload:
