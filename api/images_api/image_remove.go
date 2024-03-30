@@ -26,7 +26,6 @@ func (ImagesApi) ImageRemoveView(c *gin.Context) {
 		return
 	}
 	global.DB.Delete(&imageList)
-	res.OKWithMessage(fmt.Sprintf("共删除 %d 张图片", count), c)
-	//绑一个钩子函数
 
+	res.OKWithMessage(fmt.Sprintf("共删除 %d 张图片", count), c)
 }

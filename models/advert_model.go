@@ -6,4 +6,5 @@ type AdvertModel struct {
 	Href   string `json:"href"`
 	Images string `json:"images"`
 	IsShow bool   `json:"is_show"`
+	//DeletedAt *gorm.DeletedAt
 }

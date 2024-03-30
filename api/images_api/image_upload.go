@@ -34,17 +34,17 @@ var (
 /**
 ** ImageUploadView 上传单个图片
  */
-func (ImagesApi) ImageUploadView(c *gin.Context) {
-	fileHeader, err := c.FormFile("image")
-	if err != nil {
-		res.FailWithMessage(err.Error(), c)
-		return
-	}
-
-	fmt.Println(fileHeader.Header)
-	fmt.Println(fileHeader.Size)
-	fmt.Println(fileHeader.Filename)
-}
+//func (ImagesApi) ImageUploadView(c *gin.Context) {
+//	fileHeader, err := c.FormFile("image")
+//	if err != nil {
+//		res.FailWithMessage(err.Error(), c)
+//		return
+//	}
+//
+//	fmt.Println(fileHeader.Header)
+//	fmt.Println(fileHeader.Size)
+//	fmt.Println(fileHeader.Filename)
+//}
 
 type FileUploadResponse struct {
 	FileName  string          `json:"file_name"`

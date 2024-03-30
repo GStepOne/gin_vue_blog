@@ -17,6 +17,15 @@ type AdvertView struct {
 	IsShow bool   `json:"is_show" binding:"required"  msg:"请选择是否展示"`
 }
 
+// AdvertListView 广告列表
+// @Tags 广告列表
+// @Summary 广告列表
+// @Description 广告列表
+// @Param limit query models.PageView false ""
+// @Param page query models.PageView false "表示多个参数"
+// @Router /api/advert [get]
+// @Produce json
+// @Success 200 {object} res.Response{data=res.ListResponse[models.AdvertModel]}
 func (AdvertApi) AdvertListView(c *gin.Context) {
 	var request models.PageView
 
@@ -45,5 +54,5 @@ func (AdvertApi) AdvertListView(c *gin.Context) {
 		res.FailWithMessage("添加广告失败", c)
 		return
 	}
-	res.OKWithData(gin.H{"count": count, "list": list}, c)
+	res.OkWithList(list, count, c)
 }

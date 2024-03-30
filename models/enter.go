@@ -1,11 +1,13 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type MODEL struct {
-	ID        uint      `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"-"`
+	ID        uint      `gorm:"primary_key" json:"id" structs:"-"`
+	CreatedAt time.Time `json:"created_at" structs:"-"`
+	UpdatedAt time.Time `json:"-"  structs:"-"`
 }
 
 type PageInfo struct {
