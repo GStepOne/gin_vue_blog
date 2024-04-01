@@ -51,7 +51,7 @@ func (AdvertApi) AdvertListView(c *gin.Context) {
 
 	if err != nil {
 		global.Log.Error(err)
-		res.FailWithMessage("添加广告失败", c)
+		res.FailWithMessage("获取广告失败", c)
 		return
 	}
 	res.OkWithList(list, count, c)
