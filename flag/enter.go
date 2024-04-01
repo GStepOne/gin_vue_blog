@@ -3,6 +3,7 @@ package flag
 import (
 	sys_flag "flag"
 	"fmt"
+	structs2 "github.com/fatih/structs"
 )
 
 type Option struct {
@@ -20,8 +21,21 @@ func Parse() Option {
 	}
 }
 
-func IsWebStop(option Option) bool {
-	return option.DB
+func IsWebStop(option Option) (f bool) {
+	maps := structs2.Map(&option)
+	for _, v := range maps {
+		switch val := v.(type) {
+		case string:
+			if val != "" {
+				f = true
+			}
+		case bool:
+			if val == true {
+				f = true
+			}
+		}
+	}
+	return f
 }
 
 func IsCreateUser(option Option) string {

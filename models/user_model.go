@@ -8,7 +8,7 @@ type UserModel struct {
 	MODEL
 	NickName       string           `gorm:"size:36" json:"nick_name"`
 	UserName       string           `gorm:"size:36" json:"user_name"`
-	Password       string           `gorm:"size:64" json:"password"`
+	Password       string           `gorm:"size:64" json:"-"`
 	Avatar         string           `gorm:"size:256" json:"avatar_id"`
 	Email          string           `gorm:"size:128" json:"email"`
 	Tel            string           `gorm:"size:18" json:"tel"`

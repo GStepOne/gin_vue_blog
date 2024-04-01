@@ -22,6 +22,8 @@ func main() {
 	//初始化数据库
 	global.DB = core.InitGorm()
 
+	global.Redis = core.ConnectRedis()
+
 	//建表
 	option := flag.Parse()
 	if flag.IsWebStop(option) {

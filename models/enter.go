@@ -24,9 +24,9 @@ type ResponseList struct {
 }
 
 type PageView struct {
-	Page  int    `form:"page,default:1"`
+	Page  int    `form:"page" default:"1"`
 	Key   string `form:"key"`
-	Limit int    `form:"limit,default:15" query:"limit,default:15" json:"limit,default:15"`
+	Limit int    `form:"limit" default:"15"`
 	Sort  string `form:"sort"`
 }
 

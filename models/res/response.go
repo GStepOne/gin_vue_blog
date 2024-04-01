@@ -43,7 +43,7 @@ func OKWithData(data any, c *gin.Context) {
 }
 
 func OKWithMessage(msg string, c *gin.Context) {
-	Result(SUCCESS, map[string]any{}, "success", c)
+	Result(SUCCESS, map[string]any{}, msg, c)
 }
 
 func Fail(data any, msg string, c *gin.Context) {
