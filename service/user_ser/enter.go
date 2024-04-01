@@ -1,9 +1,8 @@
 package user_ser
 
 import (
-	"blog/gin/global"
+	"blog/gin/service/redis_ser"
 	"blog/gin/utils/jwt"
-	"fmt"
 	"time"
 )
 
@@ -15,6 +14,7 @@ func (UserService) Logout(claims *jwt.CustomClaims, token string) error {
 	exp := claims.ExpiresAt
 	now := time.Now()
 	diff := exp.Time.Sub(now)
-	err := global.Redis.Set(fmt.Sprintf("logout_%s", token), "", diff).Err()
+	err := redis_ser.Logout(token, diff)
+	//err := global.Redis.Set(fmt.Sprintf("logout_%s", token), "", diff).Err()
 	return err
 }

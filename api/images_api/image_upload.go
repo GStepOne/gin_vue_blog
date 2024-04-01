@@ -199,10 +199,6 @@ func (ImagesApi) ImagesMultiUploadView(c *gin.Context) {
 		ServiceRes := service.ServiceApp.ImageService.ImageUploadService(file)
 		fmt.Println("上传返回值", ServiceRes)
 		resList = append(resList, ServiceRes)
-		//if ServiceRes.IsSuccess {
-		//	continue
-		//}
-
 		//不是7牛 本地保存一下
 		if !global.Config.QiNiu.Enable {
 			fmt.Println("文件路径 非7牛", ServiceRes.FilePath)

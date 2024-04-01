@@ -53,11 +53,11 @@ upload:
   path: uploads/file
   size: 1
 email:
-  host: 127.0.0.1
-  port: 0
-  user: ""
-  password: ""
-  default_from_email: ""
+  host: smtp.qq.com
+  port: 465
+  user: "124307954@qq.com"
+  password: "euudczvnmumnbggb"
+  default_from_email: "124307954@qq.com"
   use_ssl: false
   use_tls: false
 redis:

@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"blog/gin/global"
 	"blog/gin/models/ctype"
 	"blog/gin/models/res"
+	"blog/gin/service/redis_ser"
 	"blog/gin/utils/jwt"
 	"github.com/gin-gonic/gin"
 )
@@ -23,13 +23,11 @@ func JwtAuth() gin.HandlerFunc {
 		}
 
 		//判断是否在redis中
-		keys := global.Redis.Keys("logout_*").Val()
-		for _, key := range keys {
-			if "logout_"+token == key {
-				res.FailWithMessage("token已失效", context)
-				context.Abort()
-				return
-			}
+		boolean := redis_ser.CheckLogout(token)
+		if boolean {
+			res.FailWithMessage("token已失效", context)
+			context.Abort()
+			return
 		}
 
 		context.Set("claims", claims)
