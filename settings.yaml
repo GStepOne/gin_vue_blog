@@ -4,7 +4,7 @@ mysql:
   db: gvb
   config: "charset=utf8mb4&parseTime=True&loc=Local"
   user: root
-  password: huahua521
+  password: huahua521*723
   log_level: dev
 logger:
   level: info
@@ -33,8 +33,8 @@ site_info:
   github_url: "222"
   gitee_url: "33"
 qq:
-  app_id: 102099599
-  key: cFnCSVO4hBe7SddP
+  app_id: 102109495399
+  key: cF2nCSV23O4hBe37SddP
   redirect: http://www.liritian.com/login?flag=qq
 jwt:
   secret: xxxx
@@ -42,8 +42,8 @@ jwt:
   issuer: xx
 qi_niu:
   enable: true
-  access_key: P-8AgS1WqT-BgVSDf1o3oPzs-892QbbNuHectlVo
-  secret_key: OcrIEwxlmhZ-huVdC83_x3_bj2tP-cwxmITdM_Nd
+  access_key: P-8AgS1WqT-BgVSDf321o3oyPzs-892QbbNuHectlVo
+  secret_key: OcrIEwxlmhZ-huVdC322383_x3_bj2tP-cwxmITdM_Nd
   bucket: gin-vue-jack-blog
   cdn: sazz982o7.hd-bkt.clouddn.com
   zone: xx
@@ -56,7 +56,7 @@ email:
   host: smtp.qq.com
   port: 465
   user: "124307954@qq.com"
-  password: "euudczvnmumnbggb"
+  password: "euudczv09nmu32mnbggb"
   default_from_email: "124307954@qq.com"
   use_ssl: false
   use_tls: false
