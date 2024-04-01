@@ -18,4 +18,5 @@ func (router RouterGroup) UserRouter() {
 	router.POST("/user_logout", middleware.JwtAuth(), app.LogoutView)
 	router.DELETE("/user_delete", middleware.JwtAuth(), app.UserRemoveView)
 	router.POST("/user_bind_mail", middleware.JwtAuth(), app.UserBindEmailView)
+	router.POST("/login", app.QQLoginView)
 }

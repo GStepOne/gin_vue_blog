@@ -14,7 +14,7 @@ logger:
   log_in_console: ""
 system:
   host: 0.0.0.0
-  port: 8081
+  port: 80
   env: release
 site_info:
   created_at: "2023-02-12"
@@ -35,7 +35,7 @@ site_info:
 qq:
   app_id: "2323"
   key: xx
-  redirect: http://xx.xxx.com/login?flag=qq
+  redirect: http://www.liritian.com/login?flag=qq
 jwt:
   secret: xxxx
   expires: 48
