@@ -6,7 +6,12 @@ import (
 	"blog/gin/models/ctype"
 	"blog/gin/models/res"
 	"blog/gin/utils/jwt"
+	md "github.com/JohannesKaufmann/html-to-markdown"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
+	"github.com/russross/blackfriday"
+	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -37,21 +42,42 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 
 	userID := claims.UserId
 	userNickname := claims.Nickname
+
 	//校验content xss 攻击
+	unsafe := blackfriday.MarkdownCommon([]byte(cr.Content))
+	//是否存在script 标签
+	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(string(unsafe)))
+	nodes := doc.Find("script").Nodes
+	if len(nodes) > 0 {
+		//有script标签
+		doc.Find("script").Remove()
+		converter := md.NewConverter("", true, nil)
+		html, _ := doc.Html()
+		markdown, _ := converter.ConvertString(html)
+		cr.Content = markdown
+	}
 	if cr.Abstract == "" {
 		//从内容里面去选择30个字符
 		abs := []rune(cr.Content) //汉字的截取不一样
+		//将content转义为html，并且过滤xss，以及
 		if len(abs) > 100 {
-			cr.Abstract = string(abs[:100])
+			cr.Abstract = string(abs[:100]) //截取0-100
 		} else {
-			cr.Abstract = string(abs[:])
+			cr.Abstract = string(abs) //小于100所有内容
 		}
 	}
 
 	//查banner_id下的banner_url
-
 	var bannerUrl string
+	var bannerIdList []uint
+	global.DB.Model(models.BannerModel{}).Select("id").Scan(&bannerIdList)
+	if len(bannerIdList) == 0 {
+		res.FailWithMessage("没有banner数据", c)
+		return
+	}
 
+	rand.Seed(time.Now().UnixNano())
+	cr.BannerID = bannerIdList[rand.Intn(len(bannerIdList))] //从bannerid里面随机获取一个
 	err = global.DB.Model(models.BannerModel{}).Where("id =?", cr.BannerID).Select("path").Scan(&bannerUrl).Error
 	if err != nil {
 		res.FailWithError(err, &cr, c)

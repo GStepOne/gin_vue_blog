@@ -13,7 +13,7 @@ type ArticleModel struct {
 	UpdatedAt     string `json:"updated_at"`
 	Title         string `json:"title"`
 	Abstract      string `json:"abstract"`
-	Content       string `json:"content"`
+	Content       string `json:"content,omit(list)"` //在list的情况下 不返回content
 	LookCount     int    `json:"look_count"`
 	CommentCount  int    `json:"comment_count"`
 	DiggCount     int    `json:"digg_count"`
