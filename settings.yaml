@@ -4,7 +4,7 @@ mysql:
   db: gvb
   config: "charset=utf8mb4&parseTime=True&loc=Local"
   user: root
-  password: huahua521*723
+  password: huahua521
   log_level: dev
 logger:
   level: info

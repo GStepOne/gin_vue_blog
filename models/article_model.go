@@ -162,3 +162,22 @@ func (article ArticleModel) CreateIndex() error {
 
 	return nil
 }
+
+// 添加
+func (data ArticleModel) Create() (err error) {
+	//第一个index 是文档
+	client := global.EsClient
+	indexResponse, err := client.Index().
+		Index(data.Index()).
+		BodyJson(data).
+		Do(context.Background())
+	if err != nil {
+		logrus.Error(err.Error())
+		return err
+	}
+	logrus.Infof("%#v", indexResponse)
+	//传递给data
+	data.ID = indexResponse.Id
+
+	return nil
+}
