@@ -16,7 +16,7 @@ import (
 func (UserApi) QQLoginView(c *gin.Context) {
 	code := c.Query("code")
 	if code == "" {
-		res.FailWithMessage("code 为空", c)
+		res.FailWithMessage("qq登录code 为空", c)
 		return
 	}
 	fmt.Println(code)

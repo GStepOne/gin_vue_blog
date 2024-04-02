@@ -8,7 +8,7 @@ import (
 // 只能增和改
 func MakeMigrations() {
 	var err error
-	global.DB.SetupJoinTable(&models.UserModel{}, "CollectsModels", &models.UserCollectModel{})
+	//global.DB.SetupJoinTable(&models.UserModel{}, "CollectsModels", &models.UserCollectModel{})
 	global.DB.SetupJoinTable(&models.MenuModel{}, "Banners", &models.MenuBannerModel{})
 	err = global.DB.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(
 		&models.BannerModel{},
@@ -17,7 +17,7 @@ func MakeMigrations() {
 		&models.AdvertModel{},
 		&models.UserModel{},
 		&models.CommentModel{},
-		&models.ArticleModel{},
+		//&models.ArticleModel{},
 		&models.MenuModel{},
 		&models.MenuBannerModel{},
 		&models.FeedbackModel{},

@@ -23,7 +23,7 @@ func main() {
 	global.DB = core.InitGorm()
 
 	global.Redis = core.ConnectRedis()
-
+	global.EsClient = core.EsConnect()
 	//建表
 	option := flag.Parse()
 	if flag.IsWebStop(option) {
@@ -31,6 +31,10 @@ func main() {
 	}
 
 	if flag.IsCreateUser(option) == "user" {
+		flag.SwitchOption(option)
+	}
+
+	if flag.IsCreateIndex(option) == "create" {
 		flag.SwitchOption(option)
 	}
 	//初始化路由

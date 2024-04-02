@@ -9,8 +9,8 @@ type CommentModel struct {
 	Content            string          `gorm:"size:256" json:"content"`                                //评论内容
 	DiggCount          int             `gorm:"size:8;default:0" json:"digg_count"`                     //点赞
 	CommentCount       int             `gorm:"size:8;default:0" json:"comment_count"`                  //评论数
-	Article            ArticleModel    `gorm:"foreignKey:ArticleID" json:"article"`                    //评论文章
-	ArticleID          uint            `json:"article_id"`                                             //评论文章id
-	User               UserModel       `json:"user"`                                                   //评论人
-	UserID             uint            `json:"user_id"`                                                //评论内容
+	//Article            ArticleModel    `gorm:"foreignKey:ArticleID" json:"article"`                    //评论文章
+	ArticleID string    `gorm:"size:32" json:"article_id"` //评论文章id
+	User      UserModel `json:"user"`                      //评论人
+	UserID    uint      `json:"user_id"`                   //评论内容
 }
