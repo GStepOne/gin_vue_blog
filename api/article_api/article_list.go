@@ -22,5 +22,12 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 		return
 	}
 	NewList := filter.Omit("list", list)
+	_list, _ := NewList.(filter.Filter)
+	//如果它为空
+	if string(_list.MustMarshalJSON()) == "{}" {
+		list = make([]models.ArticleModel, 0)
+		res.OkWithList(list, int64(count), c)
+		return
+	}
 	res.OkWithList(NewList, int64(count), c)
 }
