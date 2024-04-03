@@ -4,6 +4,7 @@ import (
 	"blog/gin/global"
 	"blog/gin/models/ctype"
 	"context"
+	"github.com/olivere/elastic/v7"
 	"github.com/sirupsen/logrus"
 )
 
@@ -12,6 +13,7 @@ type ArticleModel struct {
 	CreatedAt     string `json:"created_at"`
 	UpdatedAt     string `json:"updated_at"`
 	Title         string `json:"title"`
+	Keyword       string `json:"keyword,omit(list)"`
 	Abstract      string `json:"abstract"`
 	Content       string `json:"content,omit(list)"` //在list的情况下 不返回content
 	LookCount     int    `json:"look_count"`
@@ -51,6 +53,9 @@ func (ArticleModel) Mapping() string {
       },
       "content": {
         "type": "text"
+      },
+      "keyword": {
+        "type": "keyword"
       },
       "abstract": {
         "type": "text"
@@ -180,4 +185,22 @@ func (data ArticleModel) Create() (err error) {
 	data.ID = indexResponse.Id
 
 	return nil
+}
+
+func (article ArticleModel) IsExistsData() bool {
+	boolSearch := elastic.NewBoolQuery()
+
+	boolSearch.Must(
+		elastic.NewTermQuery("keyword", article.Keyword),
+	)
+	res, err := global.EsClient.Search(article.Index()).Query(boolSearch).Size(1).Do(context.Background())
+	if err != nil {
+		logrus.Error(err.Error())
+		return false
+	}
+
+	if res.Hits.TotalHits.Value > 0 {
+		return true
+	}
+	return false
 }

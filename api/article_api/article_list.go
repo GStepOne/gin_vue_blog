@@ -23,5 +23,4 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 	}
 	NewList := filter.Omit("list", list)
 	res.OkWithList(NewList, int64(count), c)
-
 }

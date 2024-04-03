@@ -33,8 +33,8 @@ site_info:
   github_url: "222"
   gitee_url: "33"
 qq:
-  app_id: 102109495399
-  key: cF2nCSV23O4hBe37SddP
+  app_id: 102099599
+  key: cFnCSVO4hBe7SddP
   redirect: http://www.liritian.com/login?flag=qq
 jwt:
   secret: xxxx
