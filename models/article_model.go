@@ -4,35 +4,36 @@ import (
 	"blog/gin/global"
 	"blog/gin/models/ctype"
 	"context"
+	"encoding/json"
 	"github.com/olivere/elastic/v7"
 	"github.com/sirupsen/logrus"
 )
 
 type ArticleModel struct {
-	ID            string `json:"id"`
-	CreatedAt     string `json:"created_at"`
-	UpdatedAt     string `json:"updated_at"`
-	Title         string `json:"title"`
-	Keyword       string `json:"keyword,omit(list)"`
-	Abstract      string `json:"abstract"`
-	Content       string `json:"content,omit(list)"` //在list的情况下 不返回content
-	LookCount     int    `json:"look_count"`
-	CommentCount  int    `json:"comment_count"`
-	DiggCount     int    `json:"digg_count"`
-	CollectsCount int    `json:"collects_count"`
+	ID            string `json:"id" structs:"id"`
+	CreatedAt     string `json:"created_at" structs:"created_at"`
+	UpdatedAt     string `json:"updated_at" structs:"updated_at"`
+	Title         string `json:"title" structs:"title"`
+	Keyword       string `json:"keyword,omit(list)" structs:"keyword"`
+	Abstract      string `json:"abstract" structs:"abstract"`
+	Content       string `json:"content,omit(list)" structs:"content"` //在list的情况下 不返回content
+	LookCount     int    `json:"look_count" structs:"look_count"`
+	CommentCount  int    `json:"comment_count" structs:"comment_count"`
+	DiggCount     int    `json:"digg_count" structs:"digg_count"`
+	CollectsCount int    `json:"collects_count" structs:"collects_count"`
 
-	UserId       uint   `json:"user_id"`
-	UserNickName string `json:"user_nick_name"`
-	UserAvatar   string `json:"user_avatar"`
+	UserId       uint   `json:"user_id" structs:"user_id"`
+	UserNickName string `json:"user_nick_name" structs:"user_nick_name"`
+	UserAvatar   string `json:"user_avatar" structs:"user_avatar"`
 
-	Category string `json:"category"`
-	Source   string `json:"source"`
-	Link     string `json:"link"`
+	Category string `json:"category" structs:"category"`
+	Source   string `json:"source" structs:"source"`
+	Link     string `json:"link" structs:"link"`
 
-	BannerID  uint   `json:"banner_id"`
-	BannerUrl string `json:"banner_url"`
+	BannerID  uint   `json:"banner_id" structs:"banner_id"`
+	BannerUrl string `json:"banner_url" structs:"banner_url"`
 
-	Tags ctype.Array `json:"tags"`
+	Tags ctype.Array `json:"tags" structs:"tags"`
 }
 
 func (ArticleModel) Index() string {
@@ -146,7 +147,7 @@ func (article ArticleModel) RemoveIndex() error {
 func (article ArticleModel) CreateIndex() error {
 	client := global.EsClient
 	if article.IndexExists() {
-		logrus.Info("索引存在,删除中")
+		logrus.Info("索引存在,删除中1")
 		err := article.RemoveIndex()
 		if err != nil {
 			logrus.Error("删除索引失败")
@@ -166,13 +167,13 @@ func (article ArticleModel) CreateIndex() error {
 		return err
 	}
 
-	logrus.Infof("%s 索引创建成功", article.Index())
+	logrus.Infof("%s 索引创建成功1", article.Index())
 
 	return nil
 }
 
 // 添加
-func (data ArticleModel) Create() (err error) {
+func (data *ArticleModel) Create() (err error) {
 	//第一个index 是文档
 	client := global.EsClient
 	indexResponse, err := client.Index().
@@ -206,4 +207,18 @@ func (article ArticleModel) IsExistsData() bool {
 		return true
 	}
 	return false
+}
+
+func (article *ArticleModel) GetDataById(id string) error {
+
+	res, err := global.EsClient.Get().Index(article.Index()).Id(id).Do(context.Background())
+	if err != nil {
+		logrus.Error(err.Error())
+		return err
+	}
+	err = json.Unmarshal(res.Source, &article)
+	if err != nil {
+		return err
+	}
+	return nil
 }

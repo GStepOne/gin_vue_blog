@@ -8,14 +8,24 @@ import (
 	"github.com/liu-cn/json-filter/filter"
 )
 
+type ArticleSearchRequest struct {
+	models.PageView
+	Tag string `json:"tag"`
+}
+
 func (ArticleApi) ArticleListView(c *gin.Context) {
-	var cr models.PageView
+	var cr ArticleSearchRequest
 
 	if err := c.ShouldBindQuery(&cr); err != nil {
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}
-	list, count, err := es_ser.CommonList(cr.Key, cr.Page, cr.Limit)
+
+	list, count, err := es_ser.CommonList(es_ser.Option{
+		PageView: cr.PageView,
+		Tag:      cr.Tag,
+		Fields:   []string{"title", "abstract", "content"},
+	})
 
 	if err != nil {
 		res.FailWithMessage("文章列表为空", c)

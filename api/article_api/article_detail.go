@@ -2,22 +2,26 @@ package article_api
 
 import (
 	"blog/gin/global"
+	"blog/gin/models"
 	"blog/gin/models/res"
 	"blog/gin/service/es_ser"
+	"blog/gin/service/redis_ser"
 	"github.com/gin-gonic/gin"
 )
 
-type ESIDRequest struct {
-	ID string `json:"id" form:"id" uri:"id"`
+type ArticleDetailRequest struct {
+	Title string `json:"title" form:"title"`
 }
 
 func (ArticleApi) ArticleDetailView(c *gin.Context) {
-	var cr ESIDRequest
+	var cr models.ESIDRequest
 	err := c.ShouldBindUri(&cr)
 	if err != nil {
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}
+
+	redis_ser.ArticleLook(cr.ID)
 
 	model, err := es_ser.CommonDetail(cr.ID)
 	if err != nil {
@@ -29,10 +33,6 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 	res.OKWithData(model, c)
 }
 
-type ArticleDetailRequest struct {
-	Title string `json:"title" form:"title"`
-}
-
 func (ArticleApi) ArticleDetailByTitle(c *gin.Context) {
 	var cr ArticleDetailRequest
 	err := c.ShouldBindQuery(&cr)
@@ -41,7 +41,7 @@ func (ArticleApi) ArticleDetailByTitle(c *gin.Context) {
 		return
 	}
 
-	model, err := es_ser.CommonDetailByTitle(cr.Title)
+	model, err := es_ser.CommonDetailByKeyWord(cr.Title)
 	if err != nil {
 		res.FailWithMessage(err.Error(), c)
 		return

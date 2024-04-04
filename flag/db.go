@@ -18,6 +18,8 @@ func MakeMigrations() {
 		&models.UserModel{},
 		&models.CommentModel{},
 		//&models.ArticleModel{},
+		&models.UserCollectModel{},
+		&models.MenuBannerModel{},
 		&models.MenuModel{},
 		&models.MenuBannerModel{},
 		&models.FeedbackModel{},
