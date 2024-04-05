@@ -90,8 +90,10 @@ func CommonList(option Option) (list []models.ArticleModel, count int, err error
 		}
 		digg := redis_ser.NewDigg().Get(hit.Id)
 		look := redis_ser.NewArticleLook().Get(hit.Id)
+		commentCount := redis_ser.NewCommentCount().Get(hit.Id)
 		article.DiggCount += digg
 		article.LookCount += look
+		article.CommentCount += commentCount
 
 		list = append(list, article)
 	}
@@ -110,7 +112,7 @@ func CommonDetail(id string) (model models.ArticleModel, err error) {
 		return
 	}
 	model.ID = res.Id
-	model.LookCount += redis_ser.NewArticleLook().Get(res.Id)
+	model.LookCount += redis_ser.NewArticleLook().Get(id)
 	return model, nil
 }
 

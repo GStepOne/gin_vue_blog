@@ -13,7 +13,7 @@ type CountDB struct {
 func (c CountDB) Set(id string) error {
 	num, _ := global.Redis.HGet(c.Index, id).Int()
 	num++
-	err := global.Redis.HSet(c.Index, id, 1).Err()
+	err := global.Redis.HSet(c.Index, id, num).Err()
 
 	return err
 }
@@ -38,4 +38,13 @@ func (c CountDB) GetInfo() map[string]int {
 		info[id] = num
 	}
 	return info
+}
+
+// 设置某个数据
+func (c CountDB) SetCount(id string, num int) error {
+	oldNum, _ := global.Redis.HGet(c.Index, id).Int()
+	newNum := oldNum + num
+	err := global.Redis.HSet(c.Index, id, newNum).Err()
+
+	return err
 }
