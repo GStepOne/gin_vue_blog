@@ -20,9 +20,7 @@ func (ArticleApi) ArticleDetailView(c *gin.Context) {
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}
-
-	redis_ser.ArticleLook(cr.ID)
-
+	redis_ser.NewArticleLook().Set(cr.ID)
 	model, err := es_ser.CommonDetail(cr.ID)
 	if err != nil {
 		global.Log.Error(err.Error())

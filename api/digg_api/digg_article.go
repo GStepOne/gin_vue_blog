@@ -14,7 +14,6 @@ func (DiggApi) DiggArticleView(c *gin.Context) {
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}
-	redis_ser.Digg(cr.ID)
-
+	redis_ser.NewDigg().Set(cr.ID)
 	res.OKWithMessage("文章点赞成功", c)
 }

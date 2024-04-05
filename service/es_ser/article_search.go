@@ -78,12 +78,7 @@ func CommonList(option Option) (list []models.ArticleModel, count int, err error
 	num := int(res.Hits.TotalHits.Value)
 	for _, hit := range res.Hits.Hits {
 		var article models.ArticleModel
-		data, err := hit.Source.MarshalJSON() //es里面的_source
-		if err != nil {
-			logrus.Error(err)
-			continue
-		}
-		err = json.Unmarshal(data, &article)
+		err = json.Unmarshal(hit.Source, &article)
 		if err != nil {
 			logrus.Error(err)
 			continue
@@ -93,8 +88,8 @@ func CommonList(option Option) (list []models.ArticleModel, count int, err error
 		if ok {
 			article.Title = title[0]
 		}
-		digg := redis_ser.GetDigg(hit.Id)
-		look := redis_ser.GetLook(hit.Id)
+		digg := redis_ser.NewDigg().Get(hit.Id)
+		look := redis_ser.NewArticleLook().Get(hit.Id)
 		article.DiggCount += digg
 		article.LookCount += look
 
@@ -115,7 +110,7 @@ func CommonDetail(id string) (model models.ArticleModel, err error) {
 		return
 	}
 	model.ID = res.Id
-	model.LookCount += redis_ser.GetLook(res.Id)
+	model.LookCount += redis_ser.NewArticleLook().Get(res.Id)
 	return model, nil
 }
 

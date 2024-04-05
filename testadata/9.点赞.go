@@ -15,8 +15,8 @@ import (
 func main() {
 	core.InitCoreConf()
 	global.Redis = core.ConnectRedis()
-	redis_ser.Digg("xxx")
-	fmt.Println(redis_ser.GetDigg("xxx"))
+	redis_ser.NewDigg().Set("xxx")
+	fmt.Println(redis_ser.NewDigg().Get("xxx"))
 
 	global.EsClient = core.EsConnect()
 	res, err := global.EsClient.Search(models.ArticleModel{}.Index()).
@@ -28,8 +28,8 @@ func main() {
 		return
 	}
 
-	diggInfo := redis_ser.GetDiggInfo()
-	lookInfo := redis_ser.GetLookInfo()
+	diggInfo := redis_ser.NewDigg().GetInfo()
+	lookInfo := redis_ser.NewArticleLook().GetInfo()
 
 	for _, hit := range res.Hits.Hits {
 		var article models.ArticleModel
@@ -57,6 +57,6 @@ func main() {
 		logrus.Info(article.Title, "点赞数据同步成功，点赞数", newDigg)
 	}
 
-	redis_ser.DiggClear()
+	redis_ser.NewDigg().Clear()
 
 }

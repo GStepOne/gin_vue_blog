@@ -27,8 +27,8 @@ func main() {
 		return
 	}
 
-	diggInfo := redis_ser.GetDiggInfo()
-	lookInfo := redis_ser.GetLookInfo()
+	diggInfo := redis_ser.NewDigg().GetInfo()
+	lookInfo := redis_ser.NewArticleLook().GetInfo()
 
 	for _, hit := range res.Hits.Hits {
 		var article models.ArticleModel
@@ -65,7 +65,7 @@ func main() {
 	}
 
 	//删除点赞和浏览量
-	redis_ser.DiggClear()
-	redis_ser.LookClear()
+	redis_ser.NewDigg().Clear()
+	redis_ser.NewArticleLook().Clear()
 
 }

@@ -17,5 +17,6 @@ func (router RouterGroup) ArticleRouter() {
 	router.DELETE("article", middleware.JwtAuth(), app.ArticleRemoveView)
 	router.POST("article/collects", middleware.JwtAuth(), app.ArticleCollectCreateView)
 	router.GET("article/collects", middleware.JwtAuth(), app.ArticleCollectList)
+	router.GET("article/fulltext", app.FullTextSearch)
 	router.DELETE("article/collects", middleware.JwtAuth(), app.ArticleCollBatchRemoveView)
 }
