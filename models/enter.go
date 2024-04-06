@@ -24,10 +24,10 @@ type ResponseList struct {
 }
 
 type PageView struct {
-	Page  int    `form:"page" default:"1"`
-	Key   string `form:"key"`
-	Limit int    `form:"limit" default:"15" query:"limit,default:15"`
-	Sort  string `form:"sort"`
+	Page  int    `form:"page"  query:"page,default=1" json:"page"`
+	Key   string `json:"key" form:"key" query:"key" `
+	Limit int    `form:"limit,default=10" query:"limit,default=10" json:"limit"`
+	Sort  string `form:"sort" query:"sort" json:"sort"`
 }
 
 type RemoveRequest struct {

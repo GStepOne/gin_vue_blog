@@ -36,7 +36,7 @@ func (MenuApi) MenuListView(c *gin.Context) {
 	//根据上面读取的menu_id读取menu_banner表的数据
 	global.DB.Debug().Preload("BannerModel").Order("sort desc").Find(&menuBanners, "menu_id in ?", menuIdList)
 
-	var menus []MenuResponse
+	var menus = make([]MenuResponse, 0)
 
 	for _, model := range menuList {
 		//model是一个菜单

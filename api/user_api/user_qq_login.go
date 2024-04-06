@@ -9,7 +9,6 @@ import (
 	"blog/gin/utils"
 	"blog/gin/utils/jwt"
 	"blog/gin/utils/random"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +18,7 @@ func (UserApi) QQLoginView(c *gin.Context) {
 		res.FailWithMessage("qq登录code 为空", c)
 		return
 	}
-	fmt.Println(code)
+	//fmt.Println(code)
 
 	qqInfo, err := qq.NewQQLogin(code)
 	if err != nil {
@@ -30,16 +29,18 @@ func (UserApi) QQLoginView(c *gin.Context) {
 	openId := qqInfo.OpenId
 	var user models.UserModel
 	err = global.DB.Take(&user, "token=?", openId).Error
+	ip, addr := utils.GetAddrByGin(c)
 	if err != nil {
 		user = models.UserModel{
 			NickName:   qqInfo.Nickname,
 			UserName:   "QQ_" + openId, //qq登录
 			Password:   utils.HashPwd(random.RandStr(16)),
 			Avatar:     qqInfo.Avatar,
-			Addr:       "内网ip",
+			Addr:       addr,
 			Token:      qqInfo.OpenId,
 			Role:       ctype.PermissionUser,
 			SignStatus: ctype.SignQQ,
+			IP:         ip,
 		}
 		err = global.DB.Create(&user).Error
 
@@ -60,6 +61,16 @@ func (UserApi) QQLoginView(c *gin.Context) {
 		res.FailWithMessage("token生成失败", c)
 		return
 	}
+
+	global.DB.Create(&models.LoginDataModel{
+		UserId:    user.ID,
+		IP:        ip,
+		Nickname:  user.NickName,
+		Token:     token,
+		Device:    "",
+		Addr:      addr,
+		LoginType: ctype.SignQQ,
+	})
 
 	res.OKWithData(token, c)
 

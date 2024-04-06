@@ -25,7 +25,7 @@ func (UserService) CreateUser(username, nickname, password string, role ctype.Ro
 	hashPwd := utils.HashPwd(password)
 	//头像
 	//avatar := "/uploads/avatar/default_avatar.jpg"
-
+	addr := utils.GetAddr(ip)
 	err = global.DB.Create(&models.UserModel{
 		UserName:   username,
 		NickName:   nickname,
@@ -34,7 +34,7 @@ func (UserService) CreateUser(username, nickname, password string, role ctype.Ro
 		Role:       role,
 		SignStatus: ctype.SignEmail,
 		IP:         ip,
-		Addr:       "内网",
+		Addr:       addr,
 		Avatar:     Avatar,
 	}).Error
 

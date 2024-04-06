@@ -3,6 +3,7 @@ package flag
 import (
 	"blog/gin/global"
 	"blog/gin/models"
+	"blog/gin/plugins/logstash"
 )
 
 // 只能增和改
@@ -24,6 +25,8 @@ func MakeMigrations() {
 		&models.MenuBannerModel{},
 		&models.FeedbackModel{},
 		&models.LoginDataModel{},
+		&models.ChatModel{},
+		&logstash.LogStashModel{},
 		//&models.LoginDataModel{}
 	)
 

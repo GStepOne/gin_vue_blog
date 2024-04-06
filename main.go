@@ -6,6 +6,8 @@ import (
 	"blog/gin/flag"
 	"blog/gin/global"
 	"blog/gin/routers"
+	"blog/gin/service/cron_ser"
+	"blog/gin/utils"
 	"fmt"
 )
 
@@ -24,6 +26,11 @@ func main() {
 
 	global.Redis = core.ConnectRedis()
 	global.EsClient = core.EsConnect()
+
+	go cron_ser.CronInt()
+
+	global.AddrDB = core.InitAddrDB()
+	defer global.AddrDB.Close()
 	//建表
 	option := flag.Parse()
 	if flag.IsWebStop(option) {
@@ -45,7 +52,7 @@ func main() {
 	//	fmt.Printf("路由方法: %s, 路径: %s, 处理函数: %p\n", route.Method, route.Path, route.HandlerFunc)
 	//}
 	addr := global.Config.System.Addr()
-	global.Log.Infof("程序gvb server 运行在 %s", addr)
+	utils.PrintSystem()
 
 	err := router.Run(addr)
 	if err != nil {
