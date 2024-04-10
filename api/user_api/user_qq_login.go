@@ -75,3 +75,13 @@ func (UserApi) QQLoginView(c *gin.Context) {
 	res.OKWithData(token, c)
 
 }
+
+func (UserApi) QQLoginPath(c *gin.Context) {
+	path := global.Config.QQ.GetPath()
+	if len(path) > 0 {
+		res.OKWithData(path, c)
+		return
+	}
+
+	res.OKWithMessage("qq登录的路径获取失败", c)
+}
