@@ -9,8 +9,8 @@ import (
 )
 
 type UserCreateRequest struct {
-	NickName string     `json:"nickname" binding:"required" msg:"请输入昵称"`
-	UserName string     `json:"username" binding:"required" msg:"请输入用户名"`
+	NickName string     `json:"nick_name" binding:"required" msg:"请输入昵称"`
+	UserName string     `json:"user_name" binding:"required" msg:"请输入用户名"`
 	Password string     `json:"password" binding:"required" msg:"请输入密码"`
 	Role     ctype.Role `json:"role" binding:"required" msg:"请选择权限"`
 }

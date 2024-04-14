@@ -21,7 +21,7 @@ func (r Role) String() string {
 	case PermissionAdmin:
 		str = "管理员"
 	case PermissionUser:
-		str = "Except"
+		str = "普通用户"
 	case PermissionVisitor:
 		str = "游客"
 	case PermissionDisableUser:

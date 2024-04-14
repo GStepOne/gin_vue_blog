@@ -40,6 +40,7 @@ func (UserApi) UserRemoveView(c *gin.Context) {
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage("删除用户失败", c)
+		return
 	}
 
 	res.OKWithMessage(fmt.Sprintf("共删除 %d 个用户", count), c)

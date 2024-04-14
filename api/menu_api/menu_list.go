@@ -59,9 +59,6 @@ func (MenuApi) MenuListView(c *gin.Context) {
 			Banners:   banners,
 		})
 	}
-
-	//fmt.Println(&menuList)
-	//fmt.Println(&menuIdList)
-
-	res.OKWithData(menus, c)
+	
+	res.OkWithList(menus, int64(len(menus)), c)
 }

@@ -12,6 +12,7 @@ import (
 	"blog/gin/api/menu_api"
 	"blog/gin/api/message_api"
 	"blog/gin/api/news_api"
+	"blog/gin/api/role_api"
 	"blog/gin/api/settings_api"
 	"blog/gin/api/tag_api"
 	"blog/gin/api/user_api"
@@ -32,6 +33,7 @@ type ApiGroup struct {
 	ChatApi     chat_api.ChatApi
 	LogApi      log_api.LogApi
 	DataApi     data_api.DataApi
+	RoleApi     role_api.RoleApi
 }
 
 var ApiGroupApp = new(ApiGroup)

@@ -15,14 +15,11 @@ type Option struct {
 
 func ComList[T any](model T, option Option) (list []T, count int64, err error) {
 	//先查一个总数
-	fmt.Println("key", option)
-	fmt.Println("key1", option.Limit)
-	fmt.Println("key2", option.PageView.Limit)
 	DB := global.DB
 	if option.Debug {
 		DB = global.DB.Session(&gorm.Session{Logger: global.MysqlLog})
 	}
-	DB = DB.Where(model)
+	DB = DB.Debug().Where(model)
 	if len(option.Likes) > 0 {
 		for index, column := range option.Likes {
 			if index == 0 {
@@ -44,7 +41,7 @@ func ComList[T any](model T, option Option) (list []T, count int64, err error) {
 	}
 	//query := DB.Where(model)
 
-	err = DB.Limit(option.Limit).Offset(offset).Order(option.Sort).Find(&list).Error
+	err = DB.Debug().Limit(option.Limit).Offset(offset).Order(option.Sort).Find(&list).Error
 
 	return list, count, err
 }

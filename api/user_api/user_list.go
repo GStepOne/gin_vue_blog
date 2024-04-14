@@ -10,33 +10,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//	type UserList struct {
-//		models.UserModel
-//
-// }
+type UserListRequest struct {
+	models.PageView
+	Role ctype.Role `json:"role" query:"role" form:"role"`
+}
+
 func (UserApi) UserListView(c *gin.Context) {
-	var pageView models.PageView
+	var pageView UserListRequest
 	if err := c.ShouldBindQuery(&pageView); err != nil {
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}
-	//token := c.Request.Header.Get("token")
-	//if token == "" {
-	//	res.FailWithMessage("未携带token", c)
-	//	return
-	//}
-	//claims, err := jwt.ParseToken(token)
-	//if err != nil {
-	//	res.FailWithMessage("token 错误", c)
-	//	return
-	//}
-	//fmt.Println("claims", claims)
 	_claims, _ := c.Get("claims")
 	claims := _claims.(*jwt.CustomClaims) //断言
 
-	list, count, _ := common.ComList(models.UserModel{}, common.Option{
-		PageView: pageView,
+	model := models.UserModel{}
+	role := int(pageView.Role)
+	if role != 0 {
+		model = models.UserModel{
+			Role: pageView.Role,
+		}
+	}
+
+	var likes []string
+	if pageView.Key != "" {
+		likes = []string{"user_name", "nick_name"}
+	}
+
+	list, count, _ := common.ComList(model, common.Option{
+		PageView: pageView.PageView,
 		Debug:    true,
+		Likes:    likes,
 	})
 
 	var users []models.UserModel
