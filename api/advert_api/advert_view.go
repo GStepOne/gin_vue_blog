@@ -5,7 +5,6 @@ import (
 	"blog/gin/models"
 	"blog/gin/models/res"
 	"blog/gin/service/common"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
@@ -32,8 +31,6 @@ func (AdvertApi) AdvertListView(c *gin.Context) {
 	err := c.ShouldBindQuery(&request)
 	referer := c.GetHeader("Referer")
 	isShow := true
-	fmt.Println(referer)
-
 	if strings.Contains(referer, "admin") {
 		//admin来的
 		isShow = false //等于false gorm会忽略

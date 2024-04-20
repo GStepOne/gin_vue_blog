@@ -2,7 +2,7 @@ mysql:
   host: 127.0.0.1
   port: 3306
   db: gvb
-  config: "charset=utf8mb4&parseTime=True&loc=Local"
+  config: charset=utf8mb4&parseTime=True&loc=Local
   user: root
   password: huahua521
   log_level: dev
@@ -19,47 +19,48 @@ system:
 site_info:
   created_at: "2023-02-12"
   bei_an: 沪ICP20211010123号-2
-  title: Jack的个人博客
-  qq_image: http://liritian.com/static/my/img/footer/qq.png
-  version: 6.0.2
-  email: 2663456523@qq.com
-  wechat_image: http://www.liritian.com/static/my/img/footer/wechat.png
-  name: jack
+  title: Asatsuki Sasori 个人博客
+  qq_image: https://p26-passport.byteacctimg.com/img/user-avatar/1f3fba24cec499cb4f124eb9c02c5828~80x80.awebp
+  version: 8.0.2
+  email: 867700123@qq.com
+  wechat_image: https://p26-passport.byteacctimg.com/img/user-avatar/1f3fba24cec499cb4f124eb9c02c5828~80x80.awebp
+  name: '@皂化弄人'
   job: 后端开发
   slogan: 赚大钱 开宝马
-  slogan_en: earn money buy bmw
+  slogan_en: earn money buy bmw.
   web: http://liritian.com
   bilibili_url: "111"
-  github_url: "222"
+  github_url: https://github.com/GStepOne
   gitee_url: "33"
+  addr: 上海市浦东新区
 qq:
-  app_id: 102099599
-  key: cFnCSVO4hBe7SddP
+  app_id: "102099599"
+  app_key: cFnCSVO4hBe7SddP
   redirect: http://www.liritian.com/login?flag=qq
 jwt:
   secret: xxxx
   expires: 48
   issuer: xx
 qi_niu:
-  enable: true
-  access_key: P-8AgS1WqT-BgVSDf321o3oyPzs-892QbbNuHectlVo
-  secret_key: OcrIEwxlmhZ-huVdC322383_x3_bj2tP-cwxmITdM_Nd
+  access_key: P-8AgS1WqT-BgVSDf1o3oPzs-892QbbNuHectlVo
+  secret_key: OcrIEwxlmhZ-huVdC83_x3_bj2tP-cwxmITdM_Nd
   bucket: gin-vue-jack-blog
   cdn: sazz982o7.hd-bkt.clouddn.com
   zone: xx
   size: 5
-  prefix: "gin"
-upload:
-  path: uploads/file
-  size: 1
+  prefix: gin
+  enable: false
 email:
   host: smtp.qq.com
   port: 465
-  user: "124307954@qq.com"
-  password: "euudczv09nmu32mnbggb"
-  default_from_email: "124307954@qq.com"
-  use_ssl: false
+  user: 124307954@qq.com
+  password: "1234"
+  default_from_email: 124307954@qq.com
+  use_ssl: true
   use_tls: false
+upload:
+  size: 1
+  path: uploads/file
 redis:
   ip: 127.0.0.1
   port: 6379
@@ -69,5 +70,5 @@ redis:
 es:
   host: http://127.0.0.1
   port: 9200
-  user:
-  password:
+  user: ""
+  password: ""

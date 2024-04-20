@@ -13,10 +13,9 @@ type BannerModel struct {
 	Hash      string          `json:"hash"`
 	Name      string          `gorm:"size:38" json:"name"`
 	ImageType ctype.ImageType `gorm:"default:1" json:"image_type"`
-	//ArticleModels []ArticleModel `gorm:"foreignKey:CoverID" json:"-"`
 }
 
-// 在同一个事务中更新数据
+// BeforeDelete 在同一个事务中更新数据
 func (b *BannerModel) BeforeDelete(tx *gorm.DB) (err error) {
 	if b.ImageType == ctype.Local {
 		err = os.Remove(b.Path)

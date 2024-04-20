@@ -5,18 +5,20 @@ import (
 	"blog/gin/core"
 	"blog/gin/global"
 	"blog/gin/models/res"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 func (SettingsApi) SettingsInfoUpdateView(c *gin.Context) {
-	var cr config.SiteInfo
-	err := c.ShouldBindUri(&cr)
+	var ser SettingsUri
+	err := c.ShouldBindUri(&ser)
 	if err != nil {
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}
 
-	switch cr.Name {
+	fmt.Println("当前的值1", ser.Name)
+	switch ser.Name {
 	case "site":
 		var info config.SiteInfo
 		err = c.ShouldBindJSON(&info)
@@ -61,6 +63,7 @@ func (SettingsApi) SettingsInfoUpdateView(c *gin.Context) {
 		global.Config.QiNiu = info
 	default:
 		res.FailWithMessage("未知的配置", c)
+		return
 	}
 
 	err = core.SetYaml()

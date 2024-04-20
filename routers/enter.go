@@ -15,6 +15,7 @@ type RouterGroup struct {
 func InitRouter() *gin.Engine {
 	gin.SetMode(global.Config.System.Env)
 	router := gin.Default()
+	router.Static("/uploads", "./uploads")
 	router.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	router.GET("login", user_api.UserApi{}.QQLoginView)
 	apiRouterGroup := router.Group("api")

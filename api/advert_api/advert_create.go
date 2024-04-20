@@ -5,12 +5,13 @@ import (
 	"blog/gin/models"
 	"blog/gin/models/res"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type AdvertRequest struct {
 	Title  string `gorm:"size:32" binding:"required" maxLength:"20" msg:"请输入标题"  structs:"title" json:"title"`
 	Href   string `json:"href" binding:"required,url" msg:"请输入跳转链接" structs:"href"`
-	Images string `json:"images" binding:"required,url" msg:"请输入一个合法的图片地址" structs:"images"`
+	Images string `json:"images" binding:"required" msg:"请输入一个合法的图片地址" structs:"images"`
 	IsShow bool   `json:"is_show"  msg:"请选择是否展示" structs:"is_show"`
 }
 
@@ -44,6 +45,10 @@ func (AdvertApi) AdvertCreate(c *gin.Context) {
 		Href:   request.Href,
 		Images: request.Images,
 		IsShow: request.IsShow,
+		MODEL: models.MODEL{
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
 	}).Error
 
 	if err != nil {

@@ -16,7 +16,6 @@ type UserModel struct {
 	Token      string           `gorm:"size:64" json:"token"`
 	IP         string           `gorm:"size:20" json:"ip,select(comment)"`
 	Role       ctype.Role       `gorm:"size:4;default:1" json:"role"`
+	RoleId     int              `gorm:"-" json:"role_id"`
 	SignStatus ctype.SignStatus `gorm:"type=smallint(6)" json:"sign_status"`
-	//ArticleModels  []ArticleModel   `gorm:"foreignKey:UserID" json:"-"`
-	//CollectsModels []ArticleModel   `gorm:"many2many:user_collect_model;joinForeignKey:UserID;JoinReferences:ArticleID" json:"-""`
 }

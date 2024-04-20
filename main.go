@@ -6,7 +6,6 @@ import (
 	"blog/gin/flag"
 	"blog/gin/global"
 	"blog/gin/routers"
-	"blog/gin/service/cron_ser"
 	"blog/gin/utils"
 	"fmt"
 )
@@ -27,7 +26,7 @@ func main() {
 	global.Redis = core.ConnectRedis()
 	global.EsClient = core.EsConnect()
 
-	go cron_ser.CronInt()
+	//go cron_ser.CronInt()
 
 	global.AddrDB = core.InitAddrDB()
 	defer global.AddrDB.Close()

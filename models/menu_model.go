@@ -5,6 +5,7 @@ import "blog/gin/models/ctype"
 type MenuModel struct {
 	MODEL
 	Title        string        `gorm:"size:32" json:"title"`
+	Path         string        `gorm:"size:254" json:"path"`
 	TitleEn      string        `gorm:"size:32" json:"title_en"`
 	Slogan       string        `gorm:"size:64" json:"slogan"`
 	Abstract     ctype.Array   `gorm:"type:string" json:"abstract"`

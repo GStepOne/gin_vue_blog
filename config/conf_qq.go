@@ -3,8 +3,8 @@ package config
 import "fmt"
 
 type QQ struct {
-	AppID    string `json:"app-id" yaml:"app_id"`
-	Key      string `json:"key" yaml:"key"`
+	AppID    string `json:"app_id" yaml:"app_id"`
+	AppKey   string `json:"app_key" yaml:"app_key"`
 	Redirect string `json:"redirect" yaml:"redirect"`
 }
 

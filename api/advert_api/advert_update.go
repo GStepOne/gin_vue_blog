@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 // AdvertUpdateView 广告更新
@@ -39,7 +40,7 @@ func (AdvertApi) AdvertUpdateView(c *gin.Context) {
 	}
 
 	maps := structs.Map(&request)
-
+	advert.UpdatedAt = time.Now()
 	err = global.DB.Debug().Model(&advert).Updates(maps).Error
 
 	//结构体转map的第三方包

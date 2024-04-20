@@ -14,7 +14,7 @@ type Banner struct {
 
 type MenuResponse struct {
 	models.MenuModel
-	Banners []Banner
+	Banners []Banner `json:"banners"`
 }
 
 func (MenuApi) MenuListView(c *gin.Context) {
@@ -49,8 +49,8 @@ func (MenuApi) MenuListView(c *gin.Context) {
 			}
 
 			banners = append(banners, Banner{
-				ID:   banner.ImageId,
-				Path: banner.ImageModel.Path,
+				ID:   banner.BannerId,
+				Path: banner.BannerModel.Path,
 			})
 		}
 
@@ -59,6 +59,6 @@ func (MenuApi) MenuListView(c *gin.Context) {
 			Banners:   banners,
 		})
 	}
-	
+
 	res.OkWithList(menus, int64(len(menus)), c)
 }

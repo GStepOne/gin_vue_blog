@@ -36,9 +36,6 @@ func (UserApi) EmailLogin(c *gin.Context) {
 	}
 
 	//校验密码
-	fmt.Println(userModel.Password)
-	fmt.Println(EmailLoginRequest.Password)
-
 	isCheck := utils.CheckPwd(userModel.Password, EmailLoginRequest.Password)
 
 	if !isCheck {

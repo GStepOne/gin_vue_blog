@@ -36,9 +36,11 @@ var (
 
 func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUploadResponse) {
 	fileName := file.Filename
-	fmt.Println("文件名", fileName)
 	imageType := ctype.Local
+	res.ImageType = imageType
 	res.IsSuccess = false
+	res.Msg = "开始处理图片基本信息"
+	res.FileName = fileName
 	//白名单判断
 	nameList := strings.Split(fileName, ".")
 	suffix := strings.ToLower(nameList[len(nameList)-1])
@@ -57,9 +59,13 @@ func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUplo
 		return res
 	}
 
+	fmt.Println("当前的type1", res.ImageType)
+
 	fileObj, err := file.Open()
 	if err != nil {
 		global.Log.Error(err)
+		res.Msg = err.Error()
+		return res
 	}
 	//读取md5的值
 	byteFile, err := io.ReadAll(fileObj)
@@ -73,15 +79,20 @@ func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUplo
 		return res
 	}
 
+	fmt.Println("当前的type2", res.ImageType)
+
+	tableFilePath := "/" + filePath
+
 	if global.Config.QiNiu.Enable {
+		fmt.Println("当前的type3", res.ImageType)
 		//上传到七牛去
 		imageType = ctype.QiNiu
 		filePathIn7Cow, err := qiniu.UploadImageQiniu(byteFile, fileName, global.Config.QiNiu.Prefix)
-		fmt.Println(err)
 		if err != nil {
 			global.Log.Error("七牛上传失败:", err)
 			res.Msg = err.Error()
 			res.ImageType = imageType
+			return res
 		} else {
 			res.IsSuccess = true
 			res.ImageType = imageType
@@ -89,13 +100,15 @@ func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUplo
 			res.FilePath = filePathIn7Cow
 		}
 	}
-
 	global.DB.Create(&models.BannerModel{
-		Path:      filePath,
+		Path:      tableFilePath,
 		Hash:      imageHash,
 		Name:      fileName,
-		ImageType: ctype.QiNiu,
+		ImageType: imageType,
 	})
+
+	res.IsSuccess = true
+	res.Msg = "图片入库成功"
 
 	return res
 }

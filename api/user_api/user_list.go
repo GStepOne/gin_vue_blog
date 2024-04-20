@@ -24,6 +24,7 @@ func (UserApi) UserListView(c *gin.Context) {
 	_claims, _ := c.Get("claims")
 	claims := _claims.(*jwt.CustomClaims) //断言
 
+	//搜索
 	model := models.UserModel{}
 	role := int(pageView.Role)
 	if role != 0 {
@@ -50,8 +51,10 @@ func (UserApi) UserListView(c *gin.Context) {
 			//管理员
 			user.UserName = ""
 		}
+		user.RoleId = int(user.Role)
 		user.Tel = desens.DesensitizationTel(user.Tel)
 		user.Email = desens.DesensitizationMail(user.Email)
+
 		users = append(users, user)
 	}
 

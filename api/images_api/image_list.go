@@ -4,7 +4,6 @@ import (
 	"blog/gin/models"
 	"blog/gin/models/res"
 	"blog/gin/service/common"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +12,6 @@ func (ImagesApi) ImageListView(c *gin.Context) {
 	var page models.PageView
 	err := c.ShouldBindQuery(&page)
 	if err != nil {
-		fmt.Println(err.Error())
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}
@@ -26,5 +24,6 @@ func (ImagesApi) ImageListView(c *gin.Context) {
 	if err != nil {
 		res.FailWithCode(res.ArgumentError, c)
 	}
-	res.OKWithData(gin.H{"count": count, "list": imageList}, c)
+
+	res.OkWithList(imageList, count, c)
 }

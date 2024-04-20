@@ -16,4 +16,5 @@ type SiteInfo struct {
 	BilibiliUrl string `yaml:"bilibili_url" json:"bilibili_url"`
 	GithubUrl   string `yaml:"github_url" json:"github_url"`
 	GiteeUrl    string `yaml:"gitee_url" json:"gitee_url"`
+	Addr        string `yaml:"addr" json:"addr"`
 }

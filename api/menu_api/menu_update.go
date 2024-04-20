@@ -35,9 +35,9 @@ func (MenuApi) MenuUpdateView(c *gin.Context) {
 		var bannerList []models.MenuBannerModel
 		for _, sort := range menuRequest.ImageSortList {
 			bannerList = append(bannerList, models.MenuBannerModel{
-				MenuId:  menuModel.ID,
-				ImageId: sort.ImageId,
-				Sort:    sort.Sort,
+				MenuId:   menuModel.ID,
+				BannerId: sort.ImageId,
+				Sort:     sort.Sort,
 			})
 		}
 		err = global.DB.Create(&bannerList).Error

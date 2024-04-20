@@ -31,7 +31,7 @@ type QQLogin struct {
 func NewQQLogin(code string) (qqInfo QQInfo, err error) {
 	qqLogin := &QQLogin{
 		appId:    global.Config.QQ.AppID,
-		appKey:   global.Config.QQ.Key,
+		appKey:   global.Config.QQ.AppKey,
 		redirect: global.Config.QQ.Redirect,
 		code:     code,
 	}

@@ -24,13 +24,7 @@ type MessageGroup map[uint]*Message
 
 var messageGroup = MessageGroup{}
 
-const (
-	userID       = 1
-	userNickname = "sansan"
-)
-
 func (MessageApi) MessageListView(c *gin.Context) {
-	//var cr models.PageView
 	_claims, _ := c.Get("claims")
 	claims := _claims.(*jwt.CustomClaims)
 	var messageList []models.MessageModel
@@ -69,5 +63,5 @@ func (MessageApi) MessageListView(c *gin.Context) {
 		messages = append(messages, *message)
 	}
 
-	res.OKWithData(messageGroup, c)
+	res.OkWithList(messages, int64(len(messages)), c)
 }

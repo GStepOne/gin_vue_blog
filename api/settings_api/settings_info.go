@@ -22,12 +22,20 @@ func (SettingsApi) SettingsInfoView(c *gin.Context) {
 	case "site":
 		res.OKWithData(global.Config.SiteInfo, c)
 	case "email":
-		res.OKWithData(global.Config.Email, c)
+		emailInfo := global.Config.Email
+		emailInfo.Password = "******"
+		res.OKWithData(emailInfo, c)
 	case "qq":
+		QQInfo := global.Config.QQ
+		QQInfo.AppKey = "******"
 		res.OKWithData(global.Config.QQ, c)
 	case "qiniu":
+		QiniuInfo := global.Config.QiNiu
+		QiniuInfo.SecretKey = "******"
 		res.OKWithData(global.Config.QiNiu, c)
 	case "jwt":
+		JwtInfo := global.Config.JWT
+		JwtInfo.Secret = "******"
 		res.OKWithData(global.Config.JWT, c)
 	default:
 		res.FailWithMessage("没有对应的方法", c)

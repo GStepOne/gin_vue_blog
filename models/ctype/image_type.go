@@ -1,5 +1,7 @@
 package ctype
 
+import "encoding/json"
+
 type ImageType int
 
 const (
@@ -7,10 +9,10 @@ const (
 	QiNiu ImageType = 2 //七牛云
 )
 
-//
-//func (s SignStatus) MarshalJSON() ([]byte, error) {
-//	return json.Marshal(s.String())
-//}
+// 这样可以在返回的json中 把他变为字符串
+func (s ImageType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.String())
+}
 
 func (s ImageType) String() string {
 	var str string

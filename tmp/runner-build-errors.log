@@ -1,0 +1,4 @@
+# blog/gin/plugins/qq
+plugins/qq/entry.go:34:30: global.Config.QQ.Key undefined (type "blog/gin/config".QQ has no field or method Key)
+# blog/gin/api/settings_api
+api/settings_api/settings_info.go:30:10: QQInfo.Key undefined (type "blog/gin/config".QQ has no field or method Key)

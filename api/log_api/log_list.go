@@ -5,20 +5,19 @@ import (
 	"blog/gin/models/res"
 	"blog/gin/plugins/logstash"
 	"blog/gin/service/common"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 type LogRequest struct {
 	models.PageView
-	Level logstash.Level `json:"level" query:"level" form:"level"`
+	Level  logstash.Level `json:"level" query:"level" form:"level"`
+	Status *bool          `json:"status" query:"status" form:"status"`
 }
 
 func (LogApi) LogListView(c *gin.Context) {
 	var cr LogRequest
 	err := c.ShouldBindQuery(&cr)
 
-	fmt.Println(&cr)
 	if err != nil {
 		res.FailWithCode(res.ArgumentError, c)
 		return
@@ -31,7 +30,7 @@ func (LogApi) LogListView(c *gin.Context) {
 	}, common.Option{
 		PageView: cr.PageView,
 		Debug:    true,
-		Likes:    []string{"ip", "addr"},
+		Likes:    []string{"content", "addr"},
 	})
 
 	res.OkWithList(list, count, c)

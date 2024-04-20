@@ -34,8 +34,8 @@ func (MenuApi) MenuView(c *gin.Context) {
 			continue
 		}
 		banners = append(banners, Banner{
-			ID:   banner.ImageId,
-			Path: banner.ImageModel.Path,
+			ID:   banner.BannerId,
+			Path: banner.BannerModel.Path,
 		})
 	}
 	menuResponse := MenuResponse{

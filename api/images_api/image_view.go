@@ -4,7 +4,6 @@ import (
 	"blog/gin/global"
 	"blog/gin/models"
 	"blog/gin/models/res"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,8 +17,6 @@ func (ImagesApi) ImageView(c *gin.Context) {
 	var imageList []ImageResponse
 
 	err := global.DB.Model(models.BannerModel{}).Select("id", "path", "name").Find(&imageList).Error
-
-	fmt.Println(imageList)
 	if err != nil {
 		res.FailWithCode(res.ArgumentError, c)
 	}

@@ -66,9 +66,7 @@ func UploadImageQiniu(data []byte, filename string, prefix string) (filePath str
 	now := time.Now().Format("20060102150405")
 	key := fmt.Sprintf("%s/%s%s.png", prefix, now, filename)
 
-	fmt.Println("key", key)
 	dataLen := int64(len(data))
-
 	err = formUploader.Put(context.Background(), &ret, token, key, bytes.NewReader(data), dataLen, &putExtra)
 	if err != nil {
 		global.Log.Error("七牛上传错误", err.Error())
