@@ -87,7 +87,7 @@ func AsyncArticleByFullText(id, title, content string) {
 		return
 	}
 
-	logrus.Infof("%s 添加成功", "共", len(result.Succeeded()), "条")
+	logrus.Infof("%s 添加成功", result.Items, len(result.Succeeded()))
 
 }
 

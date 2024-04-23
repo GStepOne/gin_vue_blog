@@ -1,4 +1,4 @@
-package tag_api
+package category_api
 
 import (
 	"blog/gin/global"
@@ -9,12 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TagView struct {
-	Title  string `gorm:"size:32" binding:"required" max:"20" msg:"请输入标题"  json:"title"`
+type CategoryView struct {
+	Title string `gorm:"size:32" binding:"required" max:"20" msg:"请输入标题"  json:"title"`
 	Value string `json:"value"`
 }
 
-func (TagApi) TagListView(c *gin.Context) {
+func (CategoryApi) CategoryListView(c *gin.Context) {
 	var request models.PageView
 
 	err := c.ShouldBindQuery(&request)
@@ -27,7 +27,7 @@ func (TagApi) TagListView(c *gin.Context) {
 	}
 
 	//判断referer 是否包含admin 如果是，就全部返回，不是，就返回is_show=true,
-	list, count, _ := common.ComList(models.TagModel{}, common.Option{
+	list, count, _ := common.ComList(models.CategoryModel{}, common.Option{
 		PageView: request,
 	})
 

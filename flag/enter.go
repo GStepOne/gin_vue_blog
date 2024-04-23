@@ -52,6 +52,7 @@ func IsCreateIndex(option Option) string {
 func SwitchOption(option Option) {
 	if option.DB {
 		MakeMigrations()
+		return
 	}
 	fmt.Println(option.User, option.User == "")
 

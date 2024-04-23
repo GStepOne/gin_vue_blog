@@ -3,6 +3,7 @@ package api
 import (
 	"blog/gin/api/advert_api"
 	"blog/gin/api/article_api"
+	"blog/gin/api/category_api"
 	"blog/gin/api/chat_api"
 	"blog/gin/api/comment_api"
 	"blog/gin/api/data_api"
@@ -34,6 +35,7 @@ type ApiGroup struct {
 	LogApi      log_api.LogApi
 	DataApi     data_api.DataApi
 	RoleApi     role_api.RoleApi
+	CategoryApi category_api.CategoryApi
 }
 
 var ApiGroupApp = new(ApiGroup)

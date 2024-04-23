@@ -10,7 +10,7 @@ import (
 
 type ArticleSearchRequest struct {
 	models.PageView
-	Tag string `json:"tag"`
+	Tag string `json:"tag" query:"tag" form:"tag"`
 }
 
 func (ArticleApi) ArticleListView(c *gin.Context) {

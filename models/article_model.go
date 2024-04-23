@@ -5,6 +5,7 @@ import (
 	"blog/gin/models/ctype"
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/olivere/elastic/v7"
 	"github.com/sirupsen/logrus"
 )
@@ -30,10 +31,9 @@ type ArticleModel struct {
 	Source   string `json:"source" structs:"source"`
 	Link     string `json:"link" structs:"link"`
 
-	BannerID  uint   `json:"banner_id" structs:"banner_id"`
-	BannerUrl string `json:"banner_url" structs:"banner_url"`
-
-	Tags ctype.Array `json:"tags" structs:"tags"`
+	BannerID  uint        `json:"banner_id" structs:"banner_id"`
+	BannerUrl string      `json:"banner_url" structs:"banner_url"`
+	Tags      ctype.Array `json:"tags" structs:"tags"`
 }
 
 func (ArticleModel) Index() string {
@@ -94,10 +94,10 @@ func (ArticleModel) Mapping() string {
       "link": {
         "type": "keyword"
       },
-      "banner_url": {
-        "type": "keyword"
+     "tags": {
+         "type": "keyword"
       },
-      "tags": {
+      "banner_url": {
         "type": "keyword"
       },
       "created_at": {
@@ -155,6 +155,7 @@ func (article ArticleModel) CreateIndex() error {
 		}
 	}
 	//没有索引创建
+	fmt.Println("mapping", article.Mapping())
 	createIndex, err := client.CreateIndex(article.Index()).BodyString(article.Mapping()).Do(context.Background())
 	if err != nil {
 		logrus.Error("创建索引失败")
@@ -172,13 +173,14 @@ func (article ArticleModel) CreateIndex() error {
 	return nil
 }
 
-// 添加
+// Create 添加
 func (data *ArticleModel) Create() (err error) {
 	//第一个index 是文档
 	client := global.EsClient
 	indexResponse, err := client.Index().
 		Index(data.Index()).
 		BodyJson(data).
+		Refresh("true").
 		Do(context.Background())
 	if err != nil {
 		logrus.Error(err.Error())

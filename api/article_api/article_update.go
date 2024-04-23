@@ -3,7 +3,6 @@ package article_api
 import (
 	"blog/gin/global"
 	"blog/gin/models"
-	"blog/gin/models/ctype"
 	"blog/gin/models/res"
 	"blog/gin/service/es_ser"
 	"fmt"
@@ -42,6 +41,7 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 			return
 		}
 	}
+
 	article := models.ArticleModel{
 		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
 		UpdatedAt: time.Now().Format("2006-01-02 15:04:05"),
@@ -56,6 +56,7 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 		BannerUrl: bannerUrl,
 		Tags:      cr.Tags,
 	}
+
 	maps := structs.Map(&article)
 	var DataMap = map[string]any{}
 	for key, v := range maps {
@@ -76,24 +77,23 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 			if val == 0 {
 				continue
 			}
-		case ctype.Array:
-			if len(val) == 0 {
-				continue
-			}
+			//case ctype.Array:
+			//	if len(val) == 0 {
+			//		continue
+			//	}
 		}
 
 		DataMap[key] = v
 	}
-	//fmt.Println("a1", article)
+
 	//这里的article会变化因为是传递引用
 	err = article.GetDataById(cr.ID)
-	//fmt.Println("a2", article)
 	if err != nil {
 		global.Log.Error(err.Error())
 		res.FailWithMessage("文章不存在", c)
 		return
 	}
-
+	fmt.Println("DataMap", DataMap)
 	err = es_ser.ArticleUpdate(cr.ID, DataMap)
 	if err != nil {
 		global.Log.Error(err.Error())
@@ -101,11 +101,7 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("打印一下article", article)
-
 	newArticle, _ := es_ser.CommonDetail(cr.ID)
-
-	fmt.Println(article.Content, newArticle.Content)
 
 	if article.Content != newArticle.Content || article.Title != newArticle.Title {
 		//先把原来的全文索引删掉

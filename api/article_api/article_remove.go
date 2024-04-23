@@ -20,7 +20,7 @@ func (ArticleApi) ArticleRemoveView(c *gin.Context) {
 	var cr ArticleIDRequest
 	err := c.ShouldBindJSON(&cr)
 	if err != nil {
-		global.Log.Error()
+		global.Log.Error(err.Error())
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}

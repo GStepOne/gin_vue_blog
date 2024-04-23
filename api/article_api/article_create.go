@@ -3,6 +3,7 @@ package article_api
 import (
 	"blog/gin/global"
 	"blog/gin/models"
+	"blog/gin/models/ctype"
 	"blog/gin/models/res"
 	"blog/gin/service/es_ser"
 	"blog/gin/utils/jwt"
@@ -16,17 +17,19 @@ import (
 )
 
 type ArticleRequest struct {
-	ID       string `json:"id" binding:"required" msg:"文章id必填"`
+	//ID       string `json:"id" binding:"required" msg:"文章id必填"`
 	Title    string `json:"title"`
 	Abstract string `json:"abstract"` //简介
 	Content  string `json:"content" binding:"required" msg:"文章内容必填"`
 
-	Category string `json:"category"`
-	Source   string `json:"source"`
-	Link     string `json:"link"`
+	Category  string `json:"category"`
+	Source    string `json:"source"`
+	Link      string `json:"link"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 
-	BannerID uint     `json:"banner_id"`
-	Tags     []string `json:"tags"`
+	BannerID uint        `json:"banner_id"`
+	Tags     ctype.Array `json:"tags"`
 }
 
 func (ArticleApi) ArticleCreateView(c *gin.Context) {
@@ -77,7 +80,7 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 	}
 
 	rand.Seed(time.Now().UnixNano())
-	cr.BannerID = bannerIdList[rand.Intn(len(bannerIdList))] //从bannerid里面随机获取一个
+	cr.BannerID = bannerIdList[rand.Intn(len(bannerIdList))] //从banner_id里面随机获取一个
 	err = global.DB.Model(models.BannerModel{}).Where("id =?", cr.BannerID).Select("path").Scan(&bannerUrl).Error
 	if err != nil {
 		res.FailWithError(err, &cr, c)
@@ -92,9 +95,12 @@ func (ArticleApi) ArticleCreateView(c *gin.Context) {
 	}
 
 	now := time.Now().Format("2006-01-02 15:04:05")
+	if cr.CreatedAt == "" {
+		cr.CreatedAt = now
+	}
 
 	article := models.ArticleModel{
-		CreatedAt:    now,
+		CreatedAt:    cr.CreatedAt,
 		UpdatedAt:    now,
 		Title:        cr.Title,
 		Keyword:      cr.Title,

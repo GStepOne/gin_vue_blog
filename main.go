@@ -32,13 +32,13 @@ func main() {
 	defer global.AddrDB.Close()
 	//建表
 	option := flag.Parse()
-	if flag.IsWebStop(option) {
-		flag.SwitchOption(option)
-	}
-
-	if flag.IsCreateUser(option) == "user" {
-		flag.SwitchOption(option)
-	}
+	//if flag.IsWebStop(option) {
+	//	flag.SwitchOption(option)
+	//}
+	//
+	//if flag.IsCreateUser(option) == "user" {
+	//	flag.SwitchOption(option)
+	//}
 
 	if flag.IsCreateIndex(option) == "create" {
 		flag.SwitchOption(option)

@@ -117,7 +117,6 @@ func (ArticleApi) ArticleTagListView(c *gin.Context) {
 	}
 
 	for _, k := range tagList {
-		//k.Tag = tagData[k.Tag]
 		k.CreatedAt = tagData[k.Tag]
 	}
 
