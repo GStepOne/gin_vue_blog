@@ -27,7 +27,7 @@ func (MessageApi) MessageRecordView(c *gin.Context) {
 	fmt.Println("wtf", cr)
 	//var MessageList = make([]models.MessageModel, 0) //这里是防止接口返回null
 
-	err = global.DB.Debug().Order("created_at desc").Find(&_messageList,
+	err = global.DB.Debug().Order("created_at asc").Find(&_messageList,
 		"(send_user_id = ? and rev_user_id= ?) or (rev_user_id = ? and send_user_id= ?)",
 		cr.SendUserId, cr.RevUserId, cr.SendUserId, cr.RevUserId).Error
 	if err != nil {

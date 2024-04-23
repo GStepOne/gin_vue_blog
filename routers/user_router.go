@@ -14,6 +14,7 @@ func (router RouterGroup) UserRouter() {
 	router.POST("/user_login", app.EmailLogin)
 	router.GET("/user_list", middleware.JwtAuth(), app.UserListView)
 	router.PUT("/user_role", middleware.JwtAuth(), app.UserUpdateRoleView)
+	router.PUT("/user_info", middleware.JwtAuth(), app.UserUpdateRoleView) //修改用户信息
 	router.PUT("/user_password", middleware.JwtAuth(), app.UserUpdatePassword)
 	router.POST("/user_logout", middleware.JwtAuth(), app.LogoutView)
 	router.DELETE("/user_delete", middleware.JwtAuth(), app.UserRemoveView)

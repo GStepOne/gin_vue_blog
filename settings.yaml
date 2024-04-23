@@ -54,7 +54,7 @@ email:
   host: smtp.qq.com
   port: 465
   user: 124307954@qq.com
-  password: "1234"
+  password: euudczvnmumnbggb
   default_from_email: 124307954@qq.com
   use_ssl: true
   use_tls: false
