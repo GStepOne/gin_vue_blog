@@ -11,6 +11,7 @@ import (
 	"github.com/DanPlayer/randomname"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -48,6 +49,14 @@ type ChatUser struct {
 	Avatar   string `json:"avatar"`
 }
 
+func randomName() string {
+	rand.Seed(time.Now().UnixNano())
+	count := len(randomname.PersonSlice)
+	// 生成一个 0 到 99 之间的随机整数
+	randomInt := rand.Intn(count)
+
+	return randomname.PersonSlice[randomInt]
+}
 func (ChatApi) ChatGroup(c *gin.Context) {
 	var upGreader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
@@ -62,7 +71,8 @@ func (ChatApi) ChatGroup(c *gin.Context) {
 		return
 	}
 	addr := conn.RemoteAddr().String()
-	nickname := randomname.GenerateName()
+	//nickname := randomname.GenerateName()
+	nickname := randomName()
 	avatar := fmt.Sprintf("uploads/avatar/%s.png", nickname)
 	chatUser := ChatUser{
 		Conn:     conn,
@@ -73,8 +83,20 @@ func (ChatApi) ChatGroup(c *gin.Context) {
 
 	//需要生成昵称，映射头像地址
 	global.Log.Infof("%s 🔗成功", addr)
+	SendGroupMessage(conn, GroupResponse{
+		NickName:    chatUser.Nickname,
+		Avatar:      chatUser.Avatar,
+		Content:     fmt.Sprintf("%s 进入聊天室", chatUser.Nickname),
+		MessageType: InRoomMsg,
+		Date:        time.Now(),
+		OnlineCount: len(ConnGroupMap),
+	})
+
+	global.Log.Infof("%s进入聊天室消息发送成功", chatUser.Nickname)
+
 	for {
 		_, p, err := conn.ReadMessage()
+		global.Log.Infof("这个时候%s是什么", p)
 		//进行参数绑定
 		if err != nil {
 			//用户断开聊天
@@ -135,6 +157,7 @@ func (ChatApi) ChatGroup(c *gin.Context) {
 			})
 		}
 	}
+	global.Log.Infof("%s", "sugar baby")
 	defer conn.Close()
 	delete(ConnGroupMap, addr)
 }

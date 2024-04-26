@@ -42,6 +42,7 @@ func GenerateNameAvatar() {
 	for _, s := range randomname.PersonSlice {
 		DrawAvatar(s, dir)
 	}
+
 }
 
 func DrawAvatar(name string, dir string) {

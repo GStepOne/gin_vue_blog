@@ -8,7 +8,6 @@ import (
 	"blog/gin/utils/jwt"
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
 )
@@ -28,7 +27,7 @@ func (ArticleApi) ArticleCollectList(c *gin.Context) {
 		res.FailWithCode(res.ArgumentError, c)
 		return
 	}
-	//var collects []models.UserCollectModel
+
 	var articleIDList []interface{}
 
 	list, count, err := common.ComList(models.UserCollectModel{UserID: claims.UserId}, common.Option{
@@ -47,8 +46,6 @@ func (ArticleApi) ArticleCollectList(c *gin.Context) {
 		articleIDList = append(articleIDList, model.ArticleID)
 		collMap[model.ArticleID] = model.CreatedAt.Format("2006-01-02 15:03:04")
 	}
-
-	fmt.Println(articleIDList)
 
 	//精确匹配keyword NewTermsQuery
 	boolSearch := elastic.NewTermsQuery("_id", articleIDList...)
@@ -81,7 +78,6 @@ func (ArticleApi) ArticleCollectList(c *gin.Context) {
 		})
 	}
 
-	fmt.Println(collList)
 	res.OkWithList(collList, count, c)
 
 }

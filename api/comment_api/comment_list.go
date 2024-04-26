@@ -10,13 +10,13 @@ import (
 )
 
 type CommentListRequest struct {
-	ArticleID string `json:"article_id"`
+	ArticleID string `json:"article_id" form:"article_id" query:"article_id"`
 }
 
 // CommentListView 处理获取文章评论列表的请求
 func (CommentApi) CommentListView(c *gin.Context) {
 	var cr CommentListRequest
-	if err := c.ShouldBindJSON(&cr); err != nil {
+	if err := c.ShouldBindQuery(&cr); err != nil {
 		global.Log.Error(err)
 		res.FailWithCode(res.ArgumentError, c)
 		return
@@ -43,7 +43,7 @@ func (CommentApi) CommentListView(c *gin.Context) {
 	}
 
 	// 返回结果
-	res.OKWithData(RootCommentList, c)
+	res.OkWithList(RootCommentList, int64(len(RootCommentList)), c)
 }
 
 // findSubComment 递归查询子评论

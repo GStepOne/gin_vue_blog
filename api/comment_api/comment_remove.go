@@ -18,7 +18,7 @@ import (
 
 func (CommentApi) CommentRemoveView(c *gin.Context) {
 	var cr CommentIDRequest
-	err := c.ShouldBindJSON(&cr)
+	err := c.ShouldBindQuery(&cr)
 	if err != nil {
 		res.FailWithCode(res.ArgumentError, c)
 		return

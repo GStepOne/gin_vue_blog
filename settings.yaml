@@ -72,3 +72,14 @@ es:
   port: 9200
   user: ""
   password: ""
+chat_group:
+  is_anonymous: true
+  is_show_time: true
+  default_limit: 100
+  welcome_title: Jack聊天室hhh
+  is_online_people: true
+  is_send_image: true
+  is_send_file: false
+  is_markdown: true
+  is_paste: true
+  content_length: 0

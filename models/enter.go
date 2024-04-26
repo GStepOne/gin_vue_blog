@@ -6,8 +6,8 @@ import (
 
 type MODEL struct {
 	ID        uint      `gorm:"primary_key" json:"id,select($any)" structs:"-"`
-	CreatedAt time.Time `json:"created_at,select($any)" structs:"-"`
-	UpdatedAt time.Time `json:"updated_at"  structs:"-"`
+	CreatedAt time.Time `json:"created_at,select($any),omit(list)" structs:"-"`
+	UpdatedAt time.Time `json:"updated_at,omit(list)"  structs:"-"`
 }
 
 type PageInfo struct {

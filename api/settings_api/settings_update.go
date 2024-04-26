@@ -61,6 +61,15 @@ func (SettingsApi) SettingsInfoUpdateView(c *gin.Context) {
 			return
 		}
 		global.Config.QiNiu = info
+
+	case "chat_group":
+		var info config.ChatGroup
+		err = c.ShouldBindJSON(&info)
+		if err != nil {
+			res.FailWithCode(res.ArgumentError, c)
+			return
+		}
+		global.Config.ChatGroup = info
 	default:
 		res.FailWithMessage("未知的配置", c)
 		return

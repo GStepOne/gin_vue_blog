@@ -37,6 +37,8 @@ func (SettingsApi) SettingsInfoView(c *gin.Context) {
 		JwtInfo := global.Config.JWT
 		JwtInfo.Secret = "******"
 		res.OKWithData(global.Config.JWT, c)
+	case "chat_group":
+		res.OKWithData(global.Config.ChatGroup, c)
 	default:
 		res.FailWithMessage("没有对应的方法", c)
 	}

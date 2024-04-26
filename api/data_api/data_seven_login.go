@@ -21,13 +21,13 @@ type DateCountResponse struct {
 
 func (DataApi) SevenLogin(c *gin.Context) {
 	var loginDateCount, signDateCount []DataCount
-	global.DB.Model(models.LoginDataModel{}).
-		Where("date_sub(curdate(),interval 7 day) <= created_at").
+	global.DB.Debug().Model(models.LoginDataModel{}).
+		Where("date_sub(curdate(),interval 30 day) <= created_at").
 		Select("date_format(created_at,'%Y-%m-%d') as date", "count(id) as count").
 		Group("date").Scan(&loginDateCount)
 
 	global.DB.Model(models.UserModel{}).
-		Where("date_sub(curdate(),interval 7 day) <= created_at").
+		Where("date_sub(curdate(),interval 30 day) <= created_at").
 		Select("date_format(created_at,'%Y-%m-%d') as date", "count(id) as count").
 		Group("date").Scan(&signDateCount)
 
@@ -47,7 +47,7 @@ func (DataApi) SevenLogin(c *gin.Context) {
 	var dataList []string
 	var loginCountList, signCountList []int
 
-	for i := -6; i <= 0; i++ {
+	for i := -30; i <= 0; i++ {
 		day := now.AddDate(0, 0, i).Format("2006-01-02")
 		loginCount := loginCountMap[day]
 		signCount := loginDateMap[day]

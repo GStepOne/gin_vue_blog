@@ -25,7 +25,7 @@ func InitCoreConf() {
 	}
 	err = yaml.Unmarshal(yamlConf, c)
 	if err != nil {
-		log.Fatal("config unmarshal error:%s")
+		log.Fatal("config unmarshal error:%s", err)
 	}
 
 	//log.Println("config yamlFile load Init success.")

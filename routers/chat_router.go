@@ -8,4 +8,5 @@ func (router RouterGroup) ChatRouter() {
 	app := api.ApiGroupApp.ChatApi
 	router.GET("chat_group", app.ChatGroup)
 	router.GET("chat_message_list", app.ChatListView)
+	router.DELETE("chat_delete_message", app.ChatDeleteView)
 }
