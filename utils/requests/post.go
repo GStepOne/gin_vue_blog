@@ -36,3 +36,31 @@ func Post(url string, data any, headers map[string]interface{}, timeout time.Dur
 	httpRsp, err := client.Do(httpReq)
 	return httpRsp, err
 }
+
+func Get(fullURI string, headers map[string]interface{}, timeout time.Duration) (*http.Response, error) {
+	// 创建 HTTP 请求
+	httpReq, err := http.NewRequest("GET", fullURI, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// 添加请求头
+	httpReq.Header.Add("Content-Type", "application/json")
+	for key, val := range headers {
+		switch v := val.(type) {
+		case string:
+			httpReq.Header.Add(key, v)
+		case int:
+			httpReq.Header.Add(key, strconv.Itoa(v))
+		}
+	}
+
+	// 创建 HTTP 客户端并发送请求
+	client := http.Client{Timeout: timeout}
+	httpRsp, err := client.Do(httpReq)
+	if err != nil {
+		return nil, err
+	}
+
+	return httpRsp, nil
+}

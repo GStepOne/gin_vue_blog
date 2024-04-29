@@ -7,12 +7,14 @@ import (
 
 const newsIndex = "news_index"
 
-type NewsData struct {
-	Index    int    `json:"index"`
-	Title    string `json:"title"`
-	HotValue string `json:"hot_value"`
-	Link     string `json:"link"`
-}
+//type NewsData struct {
+//	Index    int    `json:"index"`
+//	Title    string `json:"title"`
+//	HotValue string `json:"hot_value"`
+//	Link     string `json:"link"`
+//}
+
+type NewsData = any
 
 func SetNews(key string, newData []NewsData) error {
 	byteData, _ := json.Marshal(newData)

@@ -13,6 +13,7 @@ func JwtAuth() gin.HandlerFunc {
 		token := context.Request.Header.Get("token")
 		if token == "" {
 			res.FailWithMessage("未携带token", context)
+			context.Abort()
 			return
 		}
 
@@ -39,6 +40,7 @@ func JwtAdmin() gin.HandlerFunc {
 		token := context.Request.Header.Get("token")
 		if token == "" {
 			res.FailWithMessage("未携带token", context)
+			context.Abort()
 			return
 		}
 

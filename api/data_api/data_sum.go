@@ -47,3 +47,22 @@ func (DataApi) DataSumView(c *gin.Context) {
 		NowSignCount:   nowSignCount,
 	}, c)
 }
+
+type WeatherResponse struct {
+	Province      string `json:"province"`
+	City          string `json:"city"`
+	Weather       string `json:"weather"`
+	Temperature   string `json:"temperature"`
+	Winddirection string `json:"winddirection"`
+}
+
+// DataWeather 获取第三方数据
+func (DataApi) DataWeather(c *gin.Context) {
+	res.OKWithData(WeatherResponse{
+		Province:      "上海",
+		City:          "上海",
+		Weather:       "晴",
+		Temperature:   "22",
+		Winddirection: "西北",
+	}, c)
+}
