@@ -59,7 +59,7 @@ func (NewsApi) NewListView(c *gin.Context) {
 	}
 	finalUrl := fmt.Sprintf("%s?id=%s&size=%d", API, cr.ID, cr.Size)
 
-	httpResponse, err := requests.Get(finalUrl, nil, TIMEOUT)
+	httpResponse, err := requests.Get(finalUrl, cr, nil, TIMEOUT)
 	if err != nil {
 		res.FailWithMessage(err.Error(), c)
 		return

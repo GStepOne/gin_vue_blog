@@ -2,7 +2,10 @@ package requests
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -37,7 +40,27 @@ func Post(url string, data any, headers map[string]interface{}, timeout time.Dur
 	return httpRsp, err
 }
 
-func Get(fullURI string, headers map[string]interface{}, timeout time.Duration) (*http.Response, error) {
+func Get(fullURI string, data interface{}, headers map[string]interface{}, timeout time.Duration) (*http.Response, error) {
+	// 将数据转换为反射值
+	v := reflect.ValueOf(data)
+
+	// 确保传入的是结构体类型
+	if v.Kind() != reflect.Struct {
+		return nil, errors.New("data must be a struct")
+	}
+	fullURI += "?"
+	// 遍历结构体的属性
+	for i := 0; i < v.NumField(); i++ {
+		// 获取结构体字段的名称和值
+		fieldName := v.Type().Field(i).Name
+		fieldValue := v.Field(i)
+
+		// 将字段名称和值添加到 URI 中
+		fullURI += fmt.Sprintf("&%s=%v", fieldName, fieldValue.Interface())
+	}
+
+	fmt.Println(fullURI)
+
 	// 创建 HTTP 请求
 	httpReq, err := http.NewRequest("GET", fullURI, nil)
 	if err != nil {

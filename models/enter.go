@@ -31,5 +31,5 @@ type PageView struct {
 }
 
 type RemoveRequest struct {
-	IDList []uint `json:"id_list"`
+	IDList []uint `json:"id_list" query:"id_list" form:"id_list"`
 }

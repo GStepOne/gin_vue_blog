@@ -59,7 +59,7 @@ email:
   use_ssl: true
   use_tls: false
 upload:
-  size: 1
+  size: 4
   path: uploads/file
 redis:
   ip: 127.0.0.1
@@ -76,7 +76,7 @@ chat_group:
   is_anonymous: true
   is_show_time: true
   default_limit: 100
-  welcome_title: Jack聊天室hhh
+  welcome_title: Jack聊天室
   is_online_people: true
   is_send_image: true
   is_send_file: false
