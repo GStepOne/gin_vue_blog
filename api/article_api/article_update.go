@@ -8,19 +8,19 @@ import (
 	"fmt"
 	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
-	"time"
 )
 
 type ArticleUpdateRequest struct {
-	ID       string   `json:"id"`
-	Content  string   `json:"content"`
-	Title    string   `json:"title"`
-	Abstract string   `json:"abstract"` //简介
-	Category string   `json:"category"`
-	Source   string   `json:"source"`
-	Link     string   `json:"link"`
-	BannerID uint     `json:"banner_id"`
-	Tags     []string `json:"tags"`
+	ID        string   `json:"id"`
+	Content   string   `json:"content"`
+	Title     string   `json:"title"`
+	Abstract  string   `json:"abstract"` //简介
+	Category  string   `json:"category"`
+	Source    string   `json:"source"`
+	Link      string   `json:"link"`
+	BannerID  uint     `json:"banner_id"`
+	Tags      []string `json:"tags"`
+	CreatedAt string   `json:"created_at"`
 }
 
 func (ArticleApi) ArticleUpdateView(c *gin.Context) {
@@ -43,8 +43,8 @@ func (ArticleApi) ArticleUpdateView(c *gin.Context) {
 	}
 
 	article := models.ArticleModel{
-		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
-		UpdatedAt: time.Now().Format("2006-01-02 15:04:05"),
+		CreatedAt: cr.CreatedAt,
+		UpdatedAt: cr.CreatedAt,
 		Title:     cr.Title,
 		Keyword:   cr.Title,
 		Abstract:  cr.Abstract,

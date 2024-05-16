@@ -25,7 +25,7 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 	list, count, err := es_ser.CommonList(es_ser.Option{
 		PageView: cr.PageView,
 		Tag:      cr.Tag,
-		Fields:   []string{"title", "abstract", "content"},
+		Fields:   []string{"title", "abstract", "content", "category"},
 	})
 
 	if err != nil {

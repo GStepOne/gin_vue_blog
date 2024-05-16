@@ -34,7 +34,7 @@ var (
 	}
 )
 
-func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUploadResponse) {
+func (ImageService) ImageUploadService(file *multipart.FileHeader, carousel bool) (res FileUploadResponse) {
 	fileName := file.Filename
 	imageType := ctype.Local
 	res.ImageType = imageType
@@ -58,11 +58,10 @@ func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUplo
 		res.Msg = fmt.Sprintf("图片大小超过设定大小，设定大小为: %dMB,当前大小为%.2fMB", global.Config.Upload.Size, size)
 		return res
 	}
-
-	fmt.Println("当前的type1", res.ImageType)
-
+	fmt.Println("当前文件路径", filePath)
 	fileObj, err := file.Open()
 	if err != nil {
+		fmt.Println("gg")
 		global.Log.Error(err)
 		res.Msg = err.Error()
 		return res
@@ -78,10 +77,6 @@ func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUplo
 		res.FilePath = bannerModel.Path
 		return res
 	}
-
-	fmt.Println("当前的type2", res.ImageType)
-
-	tableFilePath := "/" + filePath
 
 	if global.Config.QiNiu.Enable {
 		fmt.Println("当前的type3", res.ImageType)
@@ -100,15 +95,35 @@ func (ImageService) ImageUploadService(file *multipart.FileHeader) (res FileUplo
 			res.FilePath = filePathIn7Cow
 		}
 	}
-	global.DB.Create(&models.BannerModel{
-		Path:      tableFilePath,
-		Hash:      imageHash,
-		Name:      fileName,
-		ImageType: imageType,
-	})
 
-	res.IsSuccess = true
-	res.Msg = "图片入库成功"
+	//添加一下网站的前缀
+	if carousel {
+		tableFilePath := "/" + filePath
+		// 处理 carousel 为 true 的情况
+		err = global.DB.Create(&models.CarouselModel{
+			Path:      tableFilePath,
+			Hash:      imageHash,
+			Name:      fileName,
+			ImageType: imageType,
+		}).Error
+	} else {
+		// 处理 carousel 为 false 的情况
+		err = global.DB.Create(&models.BannerModel{
+			Path:      global.Config.SiteInfo.Web + "/" + filePath,
+			Hash:      imageHash,
+			Name:      fileName,
+			ImageType: imageType,
+		}).Error
+	}
 
+	if err != nil {
+		res.IsSuccess = false
+		res.Msg = "图片入库失败"
+	} else {
+		res.IsSuccess = true
+		res.Msg = "图片入库成功"
+	}
+
+	fmt.Println("当前的res", res)
 	return res
 }

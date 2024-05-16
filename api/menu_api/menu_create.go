@@ -19,6 +19,7 @@ type MenuRequest struct {
 	TitleEn       string       `json:"title_en"  msg:"请完善菜单英文名称" structs:"title_en"`
 	Slogan        string       `json:"slogan" structs:"slogan"`
 	Path          string       `json:"path" structs:"path"`
+	Key           string       `json:"key" structs:"key"`
 	Abstract      ctype.Array  `json:"abstract" structs:"abstract"`
 	AbstractTime  int          `json:"abstract_time" structs:"abstract_time"`
 	BannerTime    int          `json:"banner_time" structs:"banner_time"` //菜单图片的切换时间 为0 不切换

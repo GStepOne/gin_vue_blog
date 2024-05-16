@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-type BannerModel struct {
+type CarouselModel struct {
 	MODEL
 	Path      string          `json:"path"`
 	Hash      string          `json:"hash"`
@@ -16,7 +16,7 @@ type BannerModel struct {
 }
 
 // BeforeDelete 在同一个事务中更新数据
-func (b *BannerModel) BeforeDelete(tx *gorm.DB) (err error) {
+func (b *CarouselModel) BeforeDelete(tx *gorm.DB) (err error) {
 	if b.ImageType == ctype.Local {
 		// 检查文件是否存在
 		if _, err := os.Stat(b.Path[1:]); err == nil {

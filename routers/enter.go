@@ -36,6 +36,7 @@ func InitRouter() *gin.Engine {
 	routerGroupApp.DataRouter()
 	routerGroupApp.RoleRouter()
 	routerGroupApp.CategoryRouter()
+	routerGroupApp.CarouselsRouter()
 
 	return router
 }

@@ -42,8 +42,9 @@ func (AdvertApi) AdvertListView(c *gin.Context) {
 	}
 
 	//判断referer 是否包含admin 如果是，就全部返回，不是，就返回is_show=true,
-	list, count, _ := common.ComList(models.AdvertModel{IsShow: isShow}, common.Option{
+	list, count, err := common.ComList(models.AdvertModel{IsShow: isShow}, common.Option{
 		PageView: request,
+		Likes:    []string{"title"},
 	})
 
 	if err != nil {

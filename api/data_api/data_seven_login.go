@@ -20,6 +20,7 @@ type DateCountResponse struct {
 }
 
 func (DataApi) SevenLogin(c *gin.Context) {
+
 	var loginDateCount, signDateCount []DataCount
 	global.DB.Debug().Model(models.LoginDataModel{}).
 		Where("date_sub(curdate(),interval 30 day) <= created_at").

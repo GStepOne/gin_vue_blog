@@ -1,4 +1,4 @@
-package images_api
+package carousel_api
 
 import (
 	"blog/gin/models"
@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (ImagesApi) ImageListView(c *gin.Context) {
-	var imageList []models.BannerModel
+func (CarouselApi) CarouselListView(c *gin.Context) {
+	var carouselList []models.CarouselModel
 	var page models.PageView
 	err := c.ShouldBindQuery(&page)
 	if err != nil {
@@ -16,15 +16,11 @@ func (ImagesApi) ImageListView(c *gin.Context) {
 		return
 	}
 
-	imageList, count, _ := common.ComList(models.BannerModel{}, common.Option{
+	carouselList, count, _ := common.ComList(models.CarouselModel{}, common.Option{
 		PageView: page,
 		Debug:    true,
 		Likes:    []string{"name"},
 	})
 
-	if err != nil {
-		res.FailWithCode(res.ArgumentError, c)
-	}
-
-	res.OkWithList(imageList, count, c)
+	res.OkWithList(carouselList, count, c)
 }

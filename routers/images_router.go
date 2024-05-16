@@ -13,3 +13,4 @@ func (router RouterGroup) ImagesRouter() {
 	router.PUT("images", app.ImageListUpdate) //批量更新
 	router.GET("image", app.ImageView)
 }
+

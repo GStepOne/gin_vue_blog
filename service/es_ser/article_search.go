@@ -115,15 +115,6 @@ func CommonDetail(id string) (model models.ArticleModel, err error) {
 	return model, nil
 }
 
-//目的是在获取之前刷新es的数据，但是在更新的时候，指定了立即刷新
-//func RefreshIndex() error {
-//	_, err := global.EsClient.Refresh().Index(models.ArticleModel{}.Index()).Do(context.Background())
-//	if err != nil {
-//		return err
-//	}
-//	return nil
-//}
-
 func CommonDetailByKeyWord(keyword string) (model models.ArticleModel, err error) {
 	//先刷新一下es的索引
 	//err = RefreshIndex()
