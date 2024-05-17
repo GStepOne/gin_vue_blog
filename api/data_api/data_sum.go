@@ -27,6 +27,9 @@ func (DataApi) DataSumView(c *gin.Context) {
 	if err != nil {
 		global.Log.Error("获取文章数据失败")
 		articleCount = 0
+
+		res.FailWithMessage("获取文章数据失败", c)
+		return
 	}
 
 	articleCount = int(result.Hits.TotalHits.Value)

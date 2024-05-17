@@ -91,7 +91,6 @@ func (ArticleApi) ArticleTagListView(c *gin.Context) {
 
 	_ = json.Unmarshal(result.Aggregations["tags"], &tagType)
 
-	fmt.Println(string(result.Aggregations["tags"]))
 	for _, bucket := range tagType.Buckets {
 		var articleList []string
 		for _, s := range bucket.Article.Buckets {
