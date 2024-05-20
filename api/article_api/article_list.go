@@ -1,6 +1,7 @@
 package article_api
 
 import (
+	"blog/gin/global"
 	"blog/gin/models"
 	"blog/gin/models/res"
 	"blog/gin/service/es_ser"
@@ -30,6 +31,7 @@ func (ArticleApi) ArticleListView(c *gin.Context) {
 
 	if err != nil {
 		res.FailWithMessage("文章列表为空", c)
+		global.Log.Error(err.Error())
 		return
 	}
 	NewList := filter.Omit("list", list)

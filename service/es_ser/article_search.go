@@ -3,150 +3,84 @@ package es_ser
 import (
 	"blog/gin/global"
 	"blog/gin/models"
-	"blog/gin/service/redis_ser"
-	"context"
-	"encoding/json"
-	"errors"
+	"bytes"
 	"github.com/olivere/elastic/v7"
-	"github.com/sirupsen/logrus"
-	"strings"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
 )
 
-type Option struct {
-	models.PageView
-	Tag    string   `form:"tag"`
-	Fields []string `form:"fields"`
+// 自定义Transport
+type LoggingTransport struct {
+	Transport http.RoundTripper
 }
 
-func (o Option) GetForm() int {
-	if o.Page == 0 {
-		o.Page = 1
+func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	// 记录请求体
+	if req.Body != nil {
+		var buf bytes.Buffer
+		tee := io.TeeReader(req.Body, &buf)
+		req.Body = ioutil.NopCloser(tee)
+		bodyBytes, _ := ioutil.ReadAll(&buf)
+		log.Printf("Request Body: %s", string(bodyBytes))
 	}
 
-	if o.Limit == 0 {
-		o.Limit = 1
+	// 执行请求
+	resp, err := t.Transport.RoundTrip(req)
+
+	// 记录响应体
+	if resp != nil && resp.Body != nil {
+		var buf bytes.Buffer
+		tee := io.TeeReader(resp.Body, &buf)
+		resp.Body = ioutil.NopCloser(tee)
+		bodyBytes, _ := ioutil.ReadAll(&buf)
+		log.Printf("Response Body: %s", string(bodyBytes))
 	}
-	return (o.Page - 1) * o.Limit
+
+	return resp, err
 }
 
-func CommonList(option Option) (list []models.ArticleModel, count int, err error) {
-	boolSearch := elastic.NewBoolQuery()
-	if option.Key != "" {
-		boolSearch.Must(
-			elastic.NewMultiMatchQuery(option.Key, option.Fields...),
-		)
+func createEsClientWithLogging() (*elastic.Client, error) {
+	transport := &LoggingTransport{
+		Transport: http.DefaultTransport,
 	}
-
-	if option.Tag != "" {
-		boolSearch.Must(
-			elastic.NewMultiMatchQuery(option.Tag, "tags"),
-		)
-	}
-
-	client := global.EsClient
-	sourceContext := elastic.NewFetchSourceContext(true).Exclude("content")
-	//高亮显示 highlight
-	type SortField struct {
-		Field     string
-		Ascending bool
-	}
-	sortField := SortField{
-		Field:     "created_at",
-		Ascending: false,
-	}
-
-	if option.Sort != "" {
-		_list := strings.Split(option.Sort, " ")
-		if len(_list) == 2 && (_list[1] == "desc" || _list[1] == "asc") {
-			sortField.Field = _list[0]
-			sortField.Ascending = _list[1] == "asc"
-		}
-	}
-
-	res, err := client.Search(models.ArticleModel{}.Index()).
-		Query(boolSearch).FetchSourceContext(sourceContext).
-		Highlight(elastic.NewHighlight().Field("title")).
-		From(option.GetForm()).
-		Sort(sortField.Field, sortField.Ascending).
-		Size(option.Limit).Do(context.Background()) // 指定返回字段
+	client, err := elastic.NewClient(
+		elastic.SetHttpClient(&http.Client{Transport: transport}),
+		elastic.SetURL("http://localhost:9200"), // 替换为你的Elasticsearch地址
+		elastic.SetSniff(false),
+	)
 	if err != nil {
-		logrus.Error(err.Error())
-		return
+		return nil, err
 	}
-
-	//查询到的总条数
-	num := int(res.Hits.TotalHits.Value)
-	for _, hit := range res.Hits.Hits {
-		var article models.ArticleModel
-		err = json.Unmarshal(hit.Source, &article)
-		if err != nil {
-			logrus.Error(err)
-			continue
-		}
-		article.ID = hit.Id
-		title, ok := hit.Highlight["title"]
-		if ok {
-			article.Title = title[0]
-		}
-		digg := redis_ser.NewDigg().Get(hit.Id)
-		look := redis_ser.NewArticleLook().Get(hit.Id)
-		commentCount := redis_ser.NewCommentCount().Get(hit.Id)
-		article.DiggCount += digg
-		article.LookCount += look
-		article.CommentCount += commentCount
-		list = append(list, article)
-	}
-
-	return list, num, nil
-
+	return client, nil
 }
 
-func CommonDetail(id string) (model models.ArticleModel, err error) {
-	res, err := global.EsClient.Get().Index(models.ArticleModel{}.Index()).Id(id).Do(context.Background())
+func main() {
+	client, err := createEsClientWithLogging()
 	if err != nil {
-		return
+		log.Fatalf("Error creating the client: %s", err)
 	}
-	err = json.Unmarshal(res.Source, &model)
+
+	// 设置全局Elasticsearch客户端
+	global.EsClient = client
+
+	// 这里调用你的函数，例如：CommonList
+	option := Option{
+		//Key:    "example",
+		Fields: []string{"title", "content"},
+		PageView: models.PageView{
+			Page:  1,
+			Limit: 10,
+		},
+		//Tag:  "sample-tag",
+		//Sort: "created_at desc",
+	}
+
+	list, count, err := CommonList(option)
 	if err != nil {
-		return
+		log.Fatalf("Error in CommonList: %s", err)
 	}
-	model.ID = res.Id
-	model.LookCount += redis_ser.NewArticleLook().Get(id)
-	return model, nil
-}
-
-func CommonDetailByKeyWord(keyword string) (model models.ArticleModel, err error) {
-	//先刷新一下es的索引
-	//err = RefreshIndex()
-	//if err != nil {
-	//	return models.ArticleModel{}, err
-	//}
-
-	res, err := global.EsClient.Search().Index(models.ArticleModel{}.Index()).
-		Query(elastic.NewTermQuery("keyword", keyword)).
-		Size(1).
-		Do(context.Background())
-	if err != nil {
-		return
-	}
-	if res.Hits.TotalHits.Value == 0 {
-		return model, errors.New("文章不存在")
-	}
-	hit := res.Hits.Hits[0]
-	err = json.Unmarshal(hit.Source, &model)
-	if err != nil {
-		return
-	}
-	return
-
-}
-
-func ArticleUpdate(id string, data map[string]any) error {
-	_, err := global.EsClient.Update().
-		Index(models.ArticleModel{}.Index()).
-		Id(id).
-		Doc(data).
-		Refresh("true"). //立马更新，否则有延迟
-		Do(context.Background())
-	return err
+	log.Printf("Total Count: %d", count)
+	log.Printf("Articles: %v", list)
 }
