@@ -36,7 +36,7 @@ site_info:
 qq:
   app_id: "102099599"
   app_key: cFnCSVO4hBe7SddP
-  redirect: http://www.liritian.com/login?flag=qq
+  redirect: https://www.liritian.com/login?flag=qq
 jwt:
   secret: xxxx
   expires: 48

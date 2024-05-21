@@ -59,23 +59,28 @@ func NewQQLogin(code string) (qqInfo QQInfo, err error) {
 func (q *QQLogin) GetAccessToken() error {
 	params := url.Values{}
 	params.Add("grant_type", "authorization_code")
-	params.Add("client_qq", q.appId)
+	params.Add("client_id", q.appId)
 	params.Add("client_secret", q.appKey)
 	params.Add("code", q.code)
-	params.Add("redirect_url", q.redirect)
+	params.Add("redirect_uri", q.redirect)
 
 	u, err := url.Parse("https://graph.qq.com/oauth2.0/token")
 	if err != nil {
+		log.Println("1", err)
 		return err
 	}
 	u.RawQuery = params.Encode()
+	fmt.Println(u.String())
 	res, err := http.Get(u.String())
 	if err != nil {
+		log.Println("2", err)
 		return err
 	}
 	defer res.Body.Close()
+
 	qs, err := parseQs(res.Body)
 	if err != nil {
+		log.Println("3", err.Error())
 		return err
 	}
 
