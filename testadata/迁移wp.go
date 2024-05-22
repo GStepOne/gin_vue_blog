@@ -41,7 +41,7 @@ type Item struct {
 }
 
 func main() {
-	xmlFile, err := os.Open("/Users/dudu/www/golang/src/blog/gin/testadata/7-2.xml")
+	xmlFile, err := os.Open("/Users/dudu/www/golang/src/blog/gin/testadata/72.xml")
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
