@@ -3,84 +3,170 @@ package es_ser
 import (
 	"blog/gin/global"
 	"blog/gin/models"
-	"bytes"
+	"blog/gin/service/redis_ser"
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/olivere/elastic/v7"
-	"io"
-	"io/ioutil"
-	"log"
-	"net/http"
+	"github.com/sirupsen/logrus"
+	"strings"
 )
 
-// 自定义Transport
-type LoggingTransport struct {
-	Transport http.RoundTripper
+type Option struct {
+	models.PageView
+	Tag    string   `form:"tag"`
+	Fields []string `form:"fields"`
 }
 
-func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	// 记录请求体
-	if req.Body != nil {
-		var buf bytes.Buffer
-		tee := io.TeeReader(req.Body, &buf)
-		req.Body = ioutil.NopCloser(tee)
-		bodyBytes, _ := ioutil.ReadAll(&buf)
-		log.Printf("Request Body: %s", string(bodyBytes))
+func (o Option) GetForm() int {
+	if o.Page == 0 {
+		o.Page = 1
 	}
 
-	// 执行请求
-	resp, err := t.Transport.RoundTrip(req)
-
-	// 记录响应体
-	if resp != nil && resp.Body != nil {
-		var buf bytes.Buffer
-		tee := io.TeeReader(resp.Body, &buf)
-		resp.Body = ioutil.NopCloser(tee)
-		bodyBytes, _ := ioutil.ReadAll(&buf)
-		log.Printf("Response Body: %s", string(bodyBytes))
+	if o.Limit == 0 {
+		o.Limit = 1
 	}
-
-	return resp, err
+	return (o.Page - 1) * o.Limit
 }
 
-func createEsClientWithLogging() (*elastic.Client, error) {
-	transport := &LoggingTransport{
-		Transport: http.DefaultTransport,
+func CommonList(option Option) (list []models.ArticleModel, count int, err error) {
+	boolSearch := elastic.NewBoolQuery()
+	if option.Key != "" {
+		boolSearch.Must(
+			elastic.NewMultiMatchQuery(option.Key, option.Fields...),
+		)
+	} else {
+		// 如果没有搜索关键词，则匹配所有文章
+		boolSearch.Must(elastic.NewMatchAllQuery())
 	}
-	client, err := elastic.NewClient(
-		elastic.SetHttpClient(&http.Client{Transport: transport}),
-		elastic.SetURL("http://localhost:9200"), // 替换为你的Elasticsearch地址
-		elastic.SetSniff(false),
-	)
+
+	if option.Tag != "" {
+		boolSearch.Must(
+			elastic.NewMultiMatchQuery(option.Tag, "tags"),
+		)
+	}
+
+	client := global.EsClient
+	sourceContext := elastic.NewFetchSourceContext(true).Exclude("content")
+
+	// 高亮显示 highlight
+	type SortField struct {
+		Field     string
+		Ascending bool
+		Unmapped  string
+	}
+	sortField := SortField{
+		Field:     "created_at",
+		Ascending: false,
+		Unmapped:  "date",
+	}
+
+	if option.Sort != "" {
+		_list := strings.Split(option.Sort, " ")
+		if len(_list) == 2 && (_list[1] == "desc" || _list[1] == "asc") {
+			sortField.Field = _list[0]
+			sortField.Ascending = _list[1] == "asc"
+		}
+	}
+
+	// 构建排序对象
+	//sort := elastic.NewFieldSort(sortField.Field).
+	//	UnmappedType(sortField.Unmapped).
+	//	Order(sortField.Ascending)
+
+	// 使用 SearchSource 构建搜索请求
+	searchSource := elastic.NewSearchSource().
+		Query(boolSearch).
+		FetchSourceContext(sourceContext).
+		Highlight(elastic.NewHighlight().Field("title")).
+		From(option.GetForm()).
+		Size(option.Limit).Sort(sortField.Field, sortField.Ascending)
+	//SortBy(sort)
+
+	// 打印搜索请求的 JSON 表示
+	searchSourceJSON, err := searchSource.Source()
 	if err != nil {
-		return nil, err
+		logrus.Error("Failed to get search source JSON:", err)
+	} else {
+		sourceJSON, _ := json.Marshal(searchSourceJSON)
+		fmt.Printf("Elasticsearch Search Request Body: %s\n", sourceJSON)
 	}
-	return client, nil
+
+	// 构建搜索请求
+	searchReq := client.Search(models.ArticleModel{}.Index()).SearchSource(searchSource)
+
+	// 执行搜索请求
+	res, err := searchReq.Do(context.Background())
+	if err != nil {
+		logrus.Error(err.Error())
+		return
+	}
+	// 查询到的总条数
+	num := int(res.Hits.TotalHits.Value)
+	for _, hit := range res.Hits.Hits {
+		var article models.ArticleModel
+		err = json.Unmarshal(hit.Source, &article)
+		if err != nil {
+			logrus.Error(err)
+			continue
+		}
+		article.ID = hit.Id
+		title, ok := hit.Highlight["title"]
+		if ok {
+			article.Title = title[0]
+		}
+		digg := redis_ser.NewDigg().Get(hit.Id)
+		look := redis_ser.NewArticleLook().Get(hit.Id)
+		commentCount := redis_ser.NewCommentCount().Get(hit.Id)
+		article.DiggCount += digg
+		article.LookCount += look
+		article.CommentCount += commentCount
+		list = append(list, article)
+	}
+	return list, num, nil
 }
 
-func main() {
-	client, err := createEsClientWithLogging()
+func CommonDetail(id string) (model models.ArticleModel, err error) {
+	res, err := global.EsClient.Get().Index(models.ArticleModel{}.Index()).Id(id).Do(context.Background())
 	if err != nil {
-		log.Fatalf("Error creating the client: %s", err)
+		return
 	}
-
-	// 设置全局Elasticsearch客户端
-	global.EsClient = client
-
-	// 这里调用你的函数，例如：CommonList
-	option := Option{
-		//Key:    "example",
-		Fields: []string{"title", "content"},
-		PageView: models.PageView{
-			Page:  1,
-			Limit: 10,
-		},
-		//Tag:  "sample-tag",
-		//Sort: "created_at desc",
-	}
-
-	list, count, err := CommonList(option)
+	err = json.Unmarshal(res.Source, &model)
 	if err != nil {
-		log.Fatalf("Error in CommonList: %s", err)
+		return
 	}
-	log.Printf("Total Count: %d", count)
-	log.Printf("Articles: %v", list)
+	model.ID = res.Id
+	model.LookCount += redis_ser.NewArticleLook().Get(id)
+	return model, nil
+}
+
+func CommonDetailByKeyWord(keyword string) (model models.ArticleModel, err error) {
+	res, err := global.EsClient.Search().Index(models.ArticleModel{}.Index()).
+		Query(elastic.NewTermQuery("keyword", keyword)).
+		Size(1).
+		Do(context.Background())
+	if err != nil {
+		return
+	}
+	if res.Hits.TotalHits.Value == 0 {
+		return model, errors.New("文章不存在")
+	}
+	hit := res.Hits.Hits[0]
+	err = json.Unmarshal(hit.Source, &model)
+	if err != nil {
+		return
+	}
+	return
+
+}
+
+func ArticleUpdate(id string, data map[string]any) error {
+	_, err := global.EsClient.Update().
+		Index(models.ArticleModel{}.Index()).
+		Id(id).
+		Doc(data).
+		Refresh("true"). //立马更新，否则有延迟
+		Do(context.Background())
+	return err
 }

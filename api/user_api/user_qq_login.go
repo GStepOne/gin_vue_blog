@@ -18,7 +18,6 @@ func (UserApi) QQLoginView(c *gin.Context) {
 		res.FailWithMessage("qq登录code 为空", c)
 		return
 	}
-
 	qqInfo, err := qq.NewQQLogin(code)
 	if err != nil {
 		global.Log.Error("登录QQ报错", err.Error())

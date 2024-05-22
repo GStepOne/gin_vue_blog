@@ -48,10 +48,12 @@ func NewQQLogin(code string) (qqInfo QQInfo, err error) {
 	}
 
 	qqInfo, err = qqLogin.GetUserInfo()
+
 	if err != nil {
 		return qqInfo, err
 	}
-
+	//默认头像,因为拿不到qq的头像了
+	qqInfo.Avatar = "/uploads/avatar/default_avatar.png"
 	qqInfo.OpenId = qqLogin.openId
 	return qqInfo, nil
 }
@@ -120,6 +122,7 @@ func (q *QQLogin) GetUserInfo() (qqInfo QQInfo, err error) {
 	}
 	u.RawQuery = params.Encode()
 	res, err := http.Get(u.String())
+	fmt.Println("获取到的qq信息", res.Body)
 	data, err := io.ReadAll(res.Body)
 	err = json.Unmarshal(data, &qqInfo)
 	defer res.Body.Close()
